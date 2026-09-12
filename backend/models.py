@@ -27,3 +27,11 @@ class Match(Base):
     winner_id: Mapped[int] = mapped_column(Integer, nullable=True)
     elo_change: Mapped[int] = mapped_column(Integer, default=0)
     played_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class Queue(Base):
+    __tablename__ = "queue"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    telegram_id: Mapped[int] = mapped_column(Integer, index=True)
+    joined_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
