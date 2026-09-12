@@ -851,91 +851,149 @@
             }
         }
 
-        // ============ AVATAR ============
-        function openAvatarSheet() {
-            document.getElementById('sheetOverlay').classList.add('active');
-            document.getElementById('avatarSheet').classList.add('active');
-            haptic();
-        }
-        function closeAvatarSheet() {
-            document.getElementById('sheetOverlay').classList.remove('active');
-            document.getElementById('avatarSheet').classList.remove('active');
-        }
+// ============ AVATAR ============
+function openAvatarSheet() {
+    document.getElementById('sheetOverlay').classList.add('active');
+    document.getElementById('avatarSheet').classList.add('active');
+    haptic();
+}
+function closeAvatarSheet() {
+    document.getElementById('sheetOverlay').classList.remove('active');
+    document.getElementById('avatarSheet').classList.remove('active');
+}
 
-        function pickFromTelegram() {
-            closeAvatarSheet();
-            const user = tg.initDataUnsafe?.user;
-            if (user?.photo_url) {
-                uploadAvatar(user.photo_url);
-            } else {
-                showToast('У вас нет фото в Telegram');
-            }
-        }
+function pickFromTelegram() {
+    closeAvatarSheet();
+    const user = tg.initDataUnsafe?.user;
+    if (user?.photo_url) {
+        uploadAvatarFromUrl(user.photo_url);
+    } else {
+        showToast('У вас нет фото в Telegram');
+    }
+}
 
-        function pickFromGallery() {
-            closeAvatarSheet();
-            document.getElementById('avatarFileInput').click();
-        }
+function pickFromGallery() {
+    closeAvatarSheet();
+    document.getElementById('avatarFileInput').click();
+}
 
-        document.getElementById('avatarFileInput').addEventListener('change', async (e) => {
-            const file = e.target.files?.[0];
-            if (!file) return;
-            if (file.size > 500_000) {
-                showToast('Файл слишком большой (макс 500KB)');
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = () => uploadAvatar(reader.result);
-            reader.readAsDataURL(file);
+document.getElementById('avatarFileInput').addEventListener('change', async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 10_000_000) {
+        showToast('Файл слишком большой (макс 10MB)');
+        return;
+    }
+    await uploadAvatarFile(file);
+});
+
+// Загрузка файла из галереи: сжимаем → отправляем как multipart
+async function uploadAvatarFile(file) {
+    if (!currentUser) return;
+    showToast('Обработка...');
+
+    try {
+        const compressedBlob = await compressImage(file, 512, 0.85);
+
+        const formData = new FormData();
+        formData.append('telegram_id', currentUser.telegram_id);
+        formData.append('file', compressedBlob, 'avatar.jpg');
+
+        const res = await fetch(`${API_URL}/api/profile/avatar`, {
+            method: 'POST',
+            body: formData
         });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.detail || 'Upload failed');
+        }
+        currentUser = await res.json();
+        renderProfileAvatar(currentUser);
+        showToast('✅ Аватар обновлён');
+        haptic('medium');
+    } catch (e) {
+        console.error('Avatar error:', e);
+        showToast(e.message || 'Ошибка загрузки');
+    }
+}
 
-        async function uploadAvatar(dataUrl) {
-            if (!currentUser) return;
-            showToast('Загрузка...');
-            try {
-                const res = await fetch(`${API_URL}/api/profile/update`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        telegram_id: currentUser.telegram_id,
-                        custom_avatar: dataUrl
-                    })
-                });
-                if (!res.ok) {
-                    const err = await res.json().catch(() => ({}));
-                    throw new Error(err.detail || 'Upload failed');
+// Загрузка фото из Telegram: скачиваем → сжимаем → отправляем как файл
+async function uploadAvatarFromUrl(url) {
+    if (!currentUser) return;
+    showToast('Загрузка...');
+    try {
+        const imgRes = await fetch(url);
+        const blob = await imgRes.blob();
+        const file = new File([blob], 'avatar.jpg', { type: blob.type || 'image/jpeg' });
+        await uploadAvatarFile(file);
+    } catch (e) {
+        console.error('Telegram avatar error:', e);
+        showToast('Ошибка загрузки фото');
+    }
+}
+
+// Сжатие картинки через canvas
+function compressImage(file, maxSize, quality) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        const reader = new FileReader();
+
+        reader.onload = (e) => { img.src = e.target.result; };
+        reader.onerror = reject;
+        img.onerror = reject;
+
+        img.onload = () => {
+            let { width, height } = img;
+            if (width > height) {
+                if (width > maxSize) {
+                    height = Math.round(height * maxSize / width);
+                    width = maxSize;
                 }
-                currentUser = await res.json();
-                renderProfileAvatar(currentUser);
-                showToast('✅ Аватар обновлён');
-                haptic('medium');
-            } catch (e) {
-                console.error('Avatar error:', e);
-                showToast(e.message || 'Ошибка загрузки');
+            } else {
+                if (height > maxSize) {
+                    width = Math.round(width * maxSize / height);
+                    height = maxSize;
+                }
             }
-        }
 
-        async function removeAvatar() {
-            closeAvatarSheet();
-            if (!currentUser) return;
-            try {
-                const res = await fetch(`${API_URL}/api/profile/update`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        telegram_id: currentUser.telegram_id,
-                        custom_avatar: ''
-                    })
-                });
-                if (!res.ok) throw new Error('Remove failed');
-                currentUser = await res.json();
-                renderProfileAvatar(currentUser);
-                showToast('Аватар удалён');
-            } catch (e) {
-                console.error(e);
-                showToast('Ошибка удаления');
-            }
-        }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            canvas.toBlob(
+                (blob) => blob ? resolve(blob) : reject(new Error('Сжатие не удалось')),
+                'image/jpeg',
+                quality
+            );
+        };
+
+        reader.readAsDataURL(file);
+    });
+}
+
+async function removeAvatar() {
+    closeAvatarSheet();
+    if (!currentUser) return;
+    try {
+        const res = await fetch(`${API_URL}/api/profile/update`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                telegram_id: currentUser.telegram_id,
+                custom_avatar: ''
+            })
+        });
+        if (!res.ok) throw new Error('Remove failed');
+        currentUser = await res.json();
+        renderProfileAvatar(currentUser);
+        showToast('Аватар удалён');
+    } catch (e) {
+        console.error(e);
+        showToast('Ошибка удаления');
+    }
+}
 
         // ============ FIND MATCH ============
         async function findMatch() {
