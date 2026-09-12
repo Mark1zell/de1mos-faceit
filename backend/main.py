@@ -3,15 +3,17 @@ import asyncio
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from sqlalchemy import select, delete
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .database import init_db, get_db
 from .models import User, Match, Queue
-from .schemas import AuthRequest, UserResponse, FindMatchRequest, MatchResultRequest
+from .schemas import (
+    AuthRequest, UserResponse, FindMatchRequest,
+    MatchResultRequest, UpdateProfileRequest
+)
 
-# Bot notification function (will be imported)
+
 async def send_bot_notification(telegram_id: int, message: str):
     try:
         from bot.bot import notify_match_found
@@ -37,6 +39,23 @@ app.add_middleware(
 )
 
 
+def build_user_response(user: User) -> UserResponse:
+    winrate = (user.wins / user.matches_played * 100) if user.matches_played > 0 else 0.0
+    return UserResponse(
+        telegram_id=user.telegram_id,
+        username=user.username,
+        display_name=user.display_name,
+        photo_url=user.photo_url,
+        standoff_id=user.standoff_id,
+        custom_avatar=user.custom_avatar,
+        elo=user.elo,
+        level=user.level,
+        matches_played=user.matches_played,
+        wins=user.wins,
+        winrate=round(winrate, 1),
+    )
+
+
 @app.post("/api/auth", response_model=UserResponse)
 async def auth_user(data: AuthRequest, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).where(User.telegram_id == data.telegram_id))
@@ -54,20 +73,20 @@ async def auth_user(data: AuthRequest, db: AsyncSession = Depends(get_db)):
         db.add(user)
         await db.commit()
         await db.refresh(user)
+    else:
+        # Обновим username/photo если изменились в Telegram
+        changed = False
+        if data.username and user.username != data.username:
+            user.username = data.username
+            changed = True
+        if data.photo_url and user.photo_url != data.photo_url:
+            user.photo_url = data.photo_url
+            changed = True
+        if changed:
+            await db.commit()
+            await db.refresh(user)
 
-    winrate = (user.wins / user.matches_played * 100) if user.matches_played > 0 else 0.0
-
-    return UserResponse(
-        telegram_id=user.telegram_id,
-        username=user.username,
-        display_name=user.display_name,
-        photo_url=user.photo_url,
-        elo=user.elo,
-        level=user.level,
-        matches_played=user.matches_played,
-        wins=user.wins,
-        winrate=round(winrate, 1),
-    )
+    return build_user_response(user)
 
 
 @app.get("/api/profile/{telegram_id}", response_model=UserResponse)
@@ -76,24 +95,38 @@ async def get_profile(telegram_id: int, db: AsyncSession = Depends(get_db)):
     user = result.scalar_one_or_none()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+    return build_user_response(user)
 
-    winrate = (user.wins / user.matches_played * 100) if user.matches_played > 0 else 0.0
-    return UserResponse(
-        telegram_id=user.telegram_id,
-        username=user.username,
-        display_name=user.display_name,
-        photo_url=user.photo_url,
-        elo=user.elo,
-        level=user.level,
-        matches_played=user.matches_played,
-        wins=user.wins,
-        winrate=round(winrate, 1),
-    )
+
+@app.post("/api/profile/update", response_model=UserResponse)
+async def update_profile(data: UpdateProfileRequest, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(User).where(User.telegram_id == data.telegram_id))
+    user = result.scalar_one_or_none()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if data.standoff_id is not None:
+        # простая валидация
+        sid = data.standoff_id.strip()
+        if len(sid) > 64:
+            raise HTTPException(status_code=400, detail="Standoff ID слишком длинный")
+        user.standoff_id = sid or None
+
+    if data.custom_avatar is not None:
+        # проверяем, что это data URL картинки и не слишком большой (лимит ~500KB base64)
+        if not data.custom_avatar.startswith("data:image/"):
+            raise HTTPException(status_code=400, detail="Некорректный формат аватара")
+        if len(data.custom_avatar) > 700_000:
+            raise HTTPException(status_code=400, detail="Аватар слишком большой (макс ~500KB)")
+        user.custom_avatar = data.custom_avatar
+
+    await db.commit()
+    await db.refresh(user)
+    return build_user_response(user)
 
 
 @app.post("/api/find_match")
 async def find_match(data: FindMatchRequest, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db)):
-    # Add to queue
     queue_entry = Queue(telegram_id=data.telegram_id)
     db.add(queue_entry)
     await db.commit()
@@ -112,17 +145,14 @@ async def simulate_match_found(telegram_id: int):
 
 @app.post("/api/match_result")
 async def match_result(data: MatchResultRequest, db: AsyncSession = Depends(get_db)):
-    # Get both players
     winner_result = await db.execute(select(User).where(User.telegram_id == data.winner_id))
     winner = winner_result.scalar_one_or_none()
-
     loser_result = await db.execute(select(User).where(User.telegram_id == data.loser_id))
     loser = loser_result.scalar_one_or_none()
 
     if not winner or not loser:
         raise HTTPException(status_code=404, detail="User not found")
 
-    # ELO calculation (simple K-factor system)
     K = 32
     expected_winner = 1 / (1 + 10 ** ((loser.elo - winner.elo) / 400))
     expected_loser = 1 - expected_winner
@@ -133,16 +163,14 @@ async def match_result(data: MatchResultRequest, db: AsyncSession = Depends(get_
     winner.elo = winner_new_elo
     winner.wins += 1
     winner.matches_played += 1
-
     loser.elo = loser_new_elo
     loser.matches_played += 1
 
-    # Save match
     match = Match(
         player1_id=data.winner_id,
         player2_id=data.loser_id,
         winner_id=data.winner_id,
-        elo_change=winner_new_elo - winner.elo
+        elo_change=K
     )
     db.add(match)
     await db.commit()
@@ -155,7 +183,13 @@ async def leaderboard(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).order_by(User.elo.desc()).limit(10))
     users = result.scalars().all()
     return [
-        {"display_name": u.display_name, "elo": u.elo, "level": u.level}
+        {
+            "display_name": u.display_name,
+            "elo": u.elo,
+            "level": u.level,
+            "custom_avatar": u.custom_avatar,
+            "photo_url": u.photo_url,
+        }
         for u in users
     ]
 
