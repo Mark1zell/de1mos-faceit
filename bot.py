@@ -1,5 +1,4 @@
 import os
-import asyncio
 import json
 import logging
 from aiogram import Bot, Dispatcher, types, F
@@ -10,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-WEBAPP_URL = os.getenv("WEBAPP_URL", "https://example.com/webapp/")
+WEBAPP_URL = os.getenv("WEBAPP_URL", "https://your-username.github.io/de1mos-faceit/")
 
 logging.basicConfig(level=logging.INFO)
 
@@ -20,7 +19,6 @@ dp = Dispatcher()
 
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
-    """Отправляем кнопку для запуска Mini App."""
     kb = types.ReplyKeyboardMarkup(
         keyboard=[
             [types.KeyboardButton(
@@ -40,7 +38,6 @@ async def cmd_start(message: types.Message):
 
 @dp.message(F.content_type == types.ContentType.WEB_APP_DATA)
 async def web_app_data(message: types.Message):
-    """Обработка данных, приходящих из Mini App."""
     try:
         data = json.loads(message.web_app_data.data)
         action = data.get("action")
@@ -51,10 +48,6 @@ async def web_app_data(message: types.Message):
                 f"Режим: {data.get('mode', 'Standoff 2')}\n\n"
                 f"Уведомление придёт сюда, когда соперник будет найден."
             )
-
-        elif action == "profile_update":
-            await message.answer("✅ Профиль обновлён.")
-
         else:
             await message.answer(f"📩 Данные получены: {json.dumps(data)}")
 
@@ -64,7 +57,6 @@ async def web_app_data(message: types.Message):
 
 
 async def notify_match_found(user_id: int, match_info: str):
-    """Отправка уведомления о найденном матче (вызывается из backend)."""
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="✅ Принять", callback_data=f"accept_{user_id}")],
         [InlineKeyboardButton(text="❌ Отклонить", callback_data=f"decline_{user_id}")]
@@ -95,4 +87,5 @@ async def main():
 
 
 if __name__ == "__main__":
+    import asyncio
     asyncio.run(main())
