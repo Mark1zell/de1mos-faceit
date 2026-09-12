@@ -1,20 +1,20 @@
 import os
 import asyncio
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .database import init_db, get_db
-from .models import User, Match
-from .schemas import AuthRequest, UserResponse, FindMatchRequest
+from .models import User, Match, Queue
+from .schemas import AuthRequest, UserResponse, FindMatchRequest, MatchResultRequest
 
-# Импорт функции уведомления из бота (ленивый импорт чтобы избежать цикла)
-async def notify_user(telegram_id: int, message: str):
+# Bot notification function (will be imported)
+async def send_bot_notification(telegram_id: int, message: str):
     try:
-        from bot import notify_match_found
+        from bot.bot import notify_match_found
         await notify_match_found(telegram_id, message)
     except Exception as e:
         print(f"Failed to notify: {e}")
@@ -36,13 +36,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Раздача статики (Mini App)
-app.mount("/webapp", StaticFiles(directory="webapp", html=True), name="webapp")
-
 
 @app.post("/api/auth", response_model=UserResponse)
 async def auth_user(data: AuthRequest, db: AsyncSession = Depends(get_db)):
-    """Автоматическая регистрация/авторизация по данным Telegram."""
     result = await db.execute(select(User).where(User.telegram_id == data.telegram_id))
     user = result.scalar_one_or_none()
 
@@ -96,19 +92,72 @@ async def get_profile(telegram_id: int, db: AsyncSession = Depends(get_db)):
 
 
 @app.post("/api/find_match")
-async def find_match(data: FindMatchRequest):
-    """Запуск поиска матча. В MVP — имитация с уведомлением через 5 секунд."""
-    asyncio.create_task(simulate_match_found(data.telegram_id))
+async def find_match(data: FindMatchRequest, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db)):
+    # Add to queue
+    queue_entry = Queue(telegram_id=data.telegram_id)
+    db.add(queue_entry)
+    await db.commit()
+
+    background_tasks.add_task(simulate_match_found, data.telegram_id)
     return {"status": "searching", "message": "Поиск матча запущен"}
 
 
 async def simulate_match_found(telegram_id: int):
-    """Имитация найденного матча (задержка + уведомление)."""
     await asyncio.sleep(5)
-    await notify_user(
+    await send_bot_notification(
         telegram_id,
         "Карта: Sandstone\nРежим: 5v5\nСоперник: Team Alpha (ELO 1050)"
     )
+
+
+@app.post("/api/match_result")
+async def match_result(data: MatchResultRequest, db: AsyncSession = Depends(get_db)):
+    # Get both players
+    winner_result = await db.execute(select(User).where(User.telegram_id == data.winner_id))
+    winner = winner_result.scalar_one_or_none()
+
+    loser_result = await db.execute(select(User).where(User.telegram_id == data.loser_id))
+    loser = loser_result.scalar_one_or_none()
+
+    if not winner or not loser:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # ELO calculation (simple K-factor system)
+    K = 32
+    expected_winner = 1 / (1 + 10 ** ((loser.elo - winner.elo) / 400))
+    expected_loser = 1 - expected_winner
+
+    winner_new_elo = int(winner.elo + K * (1 - expected_winner))
+    loser_new_elo = int(loser.elo + K * (0 - expected_loser))
+
+    winner.elo = winner_new_elo
+    winner.wins += 1
+    winner.matches_played += 1
+
+    loser.elo = loser_new_elo
+    loser.matches_played += 1
+
+    # Save match
+    match = Match(
+        player1_id=data.winner_id,
+        player2_id=data.loser_id,
+        winner_id=data.winner_id,
+        elo_change=winner_new_elo - winner.elo
+    )
+    db.add(match)
+    await db.commit()
+
+    return {"status": "ok", "winner_new_elo": winner_new_elo, "loser_new_elo": loser_new_elo}
+
+
+@app.get("/api/leaderboard")
+async def leaderboard(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(User).order_by(User.elo.desc()).limit(10))
+    users = result.scalars().all()
+    return [
+        {"display_name": u.display_name, "elo": u.elo, "level": u.level}
+        for u in users
+    ]
 
 
 @app.get("/api/health")
