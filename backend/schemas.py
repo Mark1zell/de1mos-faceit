@@ -22,18 +22,12 @@ class UserResponse(BaseModel):
     wins: int
     winrate: float
 
-    class Config:
-        from_attributes = True
-
 
 class FindMatchRequest(BaseModel):
     telegram_id: int
     mode: str = "standoff2"
 
 
-class MatchHistory(BaseModel):
-    id: int
-    opponent_name: str
-    result: str
-    elo_change: int
-    played_at: datetime
+class MatchResultRequest(BaseModel):
+    winner_id: int
+    loser_id: int
