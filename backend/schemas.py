@@ -16,11 +16,19 @@ class UserResponse(BaseModel):
     username: Optional[str]
     display_name: str
     photo_url: Optional[str]
+    standoff_id: Optional[str]
+    custom_avatar: Optional[str]
     elo: int
     level: int
     matches_played: int
     wins: int
     winrate: float
+
+
+class UpdateProfileRequest(BaseModel):
+    telegram_id: int
+    standoff_id: Optional[str] = None
+    custom_avatar: Optional[str] = None    # base64 data URL
 
 
 class FindMatchRequest(BaseModel):
