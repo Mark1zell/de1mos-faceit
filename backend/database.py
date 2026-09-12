@@ -1,22 +1,17 @@
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from sqlalchemy.orm import DeclarativeBase
 import os
+from supabase import create_client, Client
+from dotenv import load_dotenv
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./de1mos_faceit.db")
+load_dotenv()
 
-engine = create_async_engine(DATABASE_URL, echo=False)
-AsyncSessionLocal = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
 
+if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
+    raise RuntimeError(
+        "SUPABASE_URL и SUPABASE_SERVICE_KEY должны быть заданы в переменных окружения"
+    )
 
-class Base(DeclarativeBase):
-    pass
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
-
-async def init_db():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
-
-async def get_db():
-    async with AsyncSessionLocal() as session:
-        yield session
+STORAGE_BUCKET = "avatars"
