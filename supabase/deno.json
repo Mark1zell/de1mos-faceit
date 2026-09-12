@@ -1,0 +1,9 @@
+{
+  "imports": {
+    "supabase": "npm:@supabase/supabase-js@^2",
+    "grammy": "npm:grammy@^1.32"
+  },
+  "compilerOptions": {
+    "lib": ["deno.window", "deno.ns"]
+  }
+}
