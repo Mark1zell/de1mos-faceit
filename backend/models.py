@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import String, Integer, DateTime, ForeignKey
+from sqlalchemy import String, Integer, DateTime, ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column
 from .database import Base
 
@@ -11,6 +11,8 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(64), nullable=True)
     display_name: Mapped[str] = mapped_column(String(128), nullable=False)
     photo_url: Mapped[str] = mapped_column(String(512), nullable=True)
+    standoff_id: Mapped[str] = mapped_column(String(64), nullable=True)          # ← новое
+    custom_avatar: Mapped[str] = mapped_column(Text, nullable=True)              # ← новое (base64)
     elo: Mapped[int] = mapped_column(Integer, default=1000)
     level: Mapped[int] = mapped_column(Integer, default=1)
     matches_played: Mapped[int] = mapped_column(Integer, default=0)
