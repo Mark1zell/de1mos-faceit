@@ -143,7 +143,7 @@ async def upload_avatar(
 
     contents = await file.read()
     if len(contents) > 2_000_000:
-    raise HTTPException(status_code=400, detail="Файл слишком большой (макс 2MB)")
+        raise HTTPException(status_code=400, detail="Файл слишком большой (макс 2MB)")
 
     result = supabase.table("users").select("*").eq("telegram_id", telegram_id).execute()
     if not result.data:
