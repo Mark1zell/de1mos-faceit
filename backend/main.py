@@ -80,18 +80,34 @@ async def auth_user(data: AuthRequest):
             "matches_played": 0,
             "wins": 0,
         }
-        result = supabase.table("users").insert(new_user).execute()
-        user = result.data[0]
-    else:
-        user = result.data[0]
+        try:
+            result = supabase.table("users").insert(new_user).execute()
+            return build_user_response(result.data[0])
+        except Exception as e:
+            print(f"Auth insert error: {e}")
+            raise HTTPException(status_code=500, detail=f"Insert failed: {e}")
+
+    user = result.data[0]
+
+    # Обновляем username/photo только если реально изменились. Всё в try/except —
+    # если update упадёт, пользователь всё равно войдёт.
+    try:
         updates = {}
-        if data.username and user.get("username") != data.username:
-            updates["username"] = data.username
-        if data.photo_url and user.get("photo_url") != data.photo_url:
+        new_username = data.username or user.get("username")
+        if new_username and new_username != user.get("username"):
+            updates["username"] = new_username
+
+        old_photo = (user.get("photo_url") or "").split("?")[0]
+        new_photo = (data.photo_url or "").split("?")[0]
+        if new_photo and new_photo != old_photo:
             updates["photo_url"] = data.photo_url
+
         if updates:
             result = supabase.table("users").update(updates).eq("telegram_id", data.telegram_id).execute()
             user = result.data[0]
+    except Exception as e:
+        # Логируем, но не падаем — профиль отдадим как есть
+        print(f"Auth update warning: {e}")
 
     return build_user_response(user)
 
