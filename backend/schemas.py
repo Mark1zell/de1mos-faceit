@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime
 
 
 class AuthRequest(BaseModel):
@@ -28,7 +27,7 @@ class UserResponse(BaseModel):
 class UpdateProfileRequest(BaseModel):
     telegram_id: int
     standoff_id: Optional[str] = None
-    custom_avatar: Optional[str] = None    # base64 data URL
+    custom_avatar: Optional[str] = None
 
 
 class FindMatchRequest(BaseModel):
