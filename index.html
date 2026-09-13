@@ -45,7 +45,7 @@
             -webkit-mask-image: radial-gradient(circle at 50% 30%, #000 15%, transparent 70%);
             z-index: -1; pointer-events: none;
         }
-        @keyframes bgFloat { 0% { transform: translate3d(0, 0, 0) scale(1); } 100% { transform: translate3d(2%, -2%, 0) scale(1.06); } }
+        @keyframes bgFloat { 0% { transform: translate3d(0,0,0) scale(1); } 100% { transform: translate3d(2%,-2%,0) scale(1.06); } }
         .header {
             position: sticky; top: 0; z-index: 100;
             display: flex; align-items: center; justify-content: space-between;
@@ -90,23 +90,14 @@
         .page { display: none; animation: fadeUp 0.4s cubic-bezier(0.2, 0.7, 0.2, 1); }
         .page.active { display: block; }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* DASHBOARD */
         .elo-card {
             position: relative;
             background: linear-gradient(140deg, rgba(0,224,138,0.07), rgba(0,184,116,0.02) 45%, rgba(5,10,8,0.6));
             border: 1px solid var(--border-strong); border-radius: 22px;
             padding: 22px; margin-bottom: 14px; overflow: hidden;
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(0,224,138,0.08);
         }
-        .elo-card::before {
-            content: ''; position: absolute; top: -60%; right: -30%;
-            width: 260px; height: 260px;
-            background: radial-gradient(circle, rgba(0,224,138,0.18), transparent 65%);
-            border-radius: 50%;
-            animation: orbFloat 14s ease-in-out infinite alternate;
-            pointer-events: none;
-        }
-        @keyframes orbFloat { 0% { transform: translate(0, 0) scale(1); opacity: 0.85; } 100% { transform: translate(-20px, 20px) scale(1.12); opacity: 1; } }
         .elo-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--emerald); opacity: 0.65; margin-bottom: 6px; font-weight: 600; }
         .elo-value {
             font-size: 54px; font-weight: 900; line-height: 1;
@@ -116,18 +107,9 @@
         }
         .elo-level { display: inline-block; background: rgba(0,224,138,0.08); border: 1px solid var(--border-strong); color: var(--emerald); padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; margin-top: 10px; }
         .elo-progress { margin-top: 18px; height: 6px; background: rgba(0,224,138,0.06); border-radius: 3px; overflow: hidden; }
-        .elo-progress-bar {
-            height: 100%; width: 0%;
-            background: linear-gradient(90deg, var(--emerald-2), var(--emerald), var(--emerald-3));
-            border-radius: 3px;
-            transition: width 1s cubic-bezier(0.2, 0.8, 0.2, 1);
-            box-shadow: 0 0 8px rgba(0,224,138,0.35);
-        }
+        .elo-progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--emerald-2), var(--emerald), var(--emerald-3)); border-radius: 3px; transition: width 1s cubic-bezier(0.2,0.8,0.2,1); }
         .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-        .stat-card {
-            background: var(--card); border: 1px solid var(--border);
-            border-radius: 16px; padding: 14px 8px; text-align: center;
-        }
+        .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 14px 8px; text-align: center; }
         .stat-value { font-size: 22px; font-weight: 800; color: var(--emerald); }
         .stat-label { font-size: 10px; color: var(--hint); margin-top: 3px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
         .play-btn {
@@ -137,7 +119,7 @@
             background-size: 200% 200%; color: #04140e;
             font-size: 17px; font-weight: 900; letter-spacing: 2px;
             cursor: pointer; margin-bottom: 18px;
-            box-shadow: 0 6px 22px rgba(0,224,138,0.22), inset 0 1px 0 rgba(255,255,255,0.3);
+            box-shadow: 0 6px 22px rgba(0,224,138,0.22);
         }
         .play-btn:active { transform: scale(0.97); }
         .play-btn:disabled { opacity: 0.55; }
@@ -156,7 +138,9 @@
             display: flex; align-items: center; gap: 12px;
             padding: 12px 14px; background: var(--card); border: 1px solid var(--border);
             border-radius: 14px; margin-bottom: 8px;
+            cursor: pointer;
         }
+        .leaderboard-item:active { border-color: var(--border-strong); }
         .lb-avatar {
             width: 34px; height: 34px; border-radius: 50%;
             background: linear-gradient(135deg, var(--emerald), var(--emerald-2));
@@ -168,19 +152,29 @@
         .leaderboard-rank { font-size: 14px; font-weight: 900; color: var(--emerald); width: 26px; text-align: center; }
         .leaderboard-name { flex: 1; font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .leaderboard-elo { font-size: 14px; font-weight: 800; color: var(--emerald); }
-        .profile-header {
+
+        /* PROFILE — MAIN */
+        .profile-hero {
             position: relative;
             background: linear-gradient(140deg, rgba(0,224,138,0.08), rgba(0,184,116,0.02) 45%, rgba(5,10,8,0.6));
             border: 1px solid var(--border-strong); border-radius: 22px;
-            padding: 24px 20px; margin-bottom: 14px; text-align: center; overflow: hidden;
+            padding: 28px 20px 22px; margin-bottom: 14px; overflow: hidden;
         }
+        .profile-hero::before {
+            content: ''; position: absolute; top: -40%; right: -30%;
+            width: 240px; height: 240px;
+            background: radial-gradient(circle, rgba(0,224,138,0.15), transparent 65%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .profile-hero-inner { position: relative; display: flex; flex-direction: column; align-items: center; }
         .profile-avatar-wrap { position: relative; display: inline-block; margin-bottom: 14px; }
         .profile-avatar {
-            width: 96px; height: 96px; border-radius: 50%;
+            width: 104px; height: 104px; border-radius: 50%;
             background: linear-gradient(135deg, var(--emerald), var(--emerald-2));
             display: flex; align-items: center; justify-content: center;
-            font-weight: 900; font-size: 36px; color: #04140e; overflow: hidden;
-            box-shadow: 0 0 0 3px rgba(0,224,138,0.20), 0 0 24px rgba(0,224,138,0.25);
+            font-weight: 900; font-size: 40px; color: #04140e; overflow: hidden;
+            box-shadow: 0 0 0 3px rgba(0,224,138,0.2), 0 0 24px rgba(0,224,138,0.25);
         }
         .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .avatar-edit-btn {
@@ -191,10 +185,65 @@
             display: flex; align-items: center; justify-content: center;
             cursor: pointer;
         }
-        .profile-name { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
-        .profile-username { font-size: 13px; color: var(--hint); margin-bottom: 14px; }
+        .profile-name { font-size: 22px; font-weight: 800; margin-bottom: 4px; text-align: center; }
+        .profile-username { font-size: 13px; color: var(--hint); margin-bottom: 14px; text-align: center; }
         .profile-username span { color: var(--emerald); }
-        .profile-fields { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; text-align: left; }
+
+        .profile-level-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 14px; border-radius: 20px;
+            background: linear-gradient(135deg, rgba(0,224,138,0.2), rgba(0,184,116,0.1));
+            border: 1px solid var(--border-strong);
+            font-size: 12px; font-weight: 800; color: var(--emerald);
+            margin-bottom: 14px;
+        }
+
+        .profile-stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 10px; margin-bottom: 12px;
+        }
+        .profile-stat {
+            background: rgba(0,224,138,0.05);
+            border: 1px solid var(--border);
+            border-radius: 14px; padding: 14px 8px;
+            text-align: center;
+        }
+        .profile-stat-value { font-size: 20px; font-weight: 900; color: var(--emerald); }
+        .profile-stat-label { font-size: 10px; color: var(--hint); margin-top: 3px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+
+        .profile-view-row {
+            display: flex; justify-content: space-between;
+            padding: 12px 14px;
+            background: rgba(0,224,138,0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px; margin-bottom: 8px;
+        }
+        .profile-view-label { font-size: 12px; color: var(--hint); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .profile-view-value { font-size: 14px; color: var(--text); font-weight: 700; }
+
+        .profile-action-btn {
+            width: 100%; padding: 14px; border: none; border-radius: 14px;
+            font-size: 14px; font-weight: 800; letter-spacing: 1px;
+            cursor: pointer; margin-top: 10px;
+            font-family: inherit;
+        }
+        .profile-action-btn.edit {
+            background: linear-gradient(135deg, #00e08a, #00b874 55%, #22e8a4);
+            color: #04140e;
+        }
+        .profile-action-btn.save {
+            background: linear-gradient(135deg, #00e08a, #00b874 55%, #22e8a4);
+            color: #04140e;
+        }
+        .profile-action-btn.cancel {
+            background: rgba(0,224,138,0.08); color: var(--emerald);
+            border: 1px solid var(--border-strong);
+        }
+        .profile-action-btn:active { transform: scale(0.97); }
+        .profile-action-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+        /* PROFILE — EDIT */
+        .profile-fields { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; text-align: left; }
         .field-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--hint); font-weight: 700; margin-bottom: 6px; display: block; }
         .field-input {
             width: 100%; background: rgba(0,224,138,0.04); border: 1px solid var(--border);
@@ -202,16 +251,27 @@
             font-family: inherit; font-weight: 600; outline: none;
         }
         .field-input:focus { border-color: var(--border-strong); background: rgba(0,224,138,0.07); }
-        .save-btn {
-            width: 100%; padding: 16px; border: none; border-radius: 16px;
-            background: linear-gradient(135deg, #00e08a, #00b874 55%, #22e8a4);
-            color: #04140e; font-size: 15px; font-weight: 900; letter-spacing: 1.5px;
-            cursor: pointer; margin-top: 16px;
+
+        /* MATCH HISTORY */
+        .match-row {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 14px; background: var(--card); border: 1px solid var(--border);
+            border-radius: 14px; margin-bottom: 8px;
         }
-        .save-btn:active { transform: scale(0.97); }
-        .save-btn:disabled { opacity: 0.55; cursor: not-allowed; }
-        .save-btn.secondary { background: rgba(0,224,138,0.1); color: var(--emerald); border: 1px solid var(--border-strong); }
-        .save-btn.danger { background: rgba(255,84,112,0.1); color: var(--red); border: 1px solid rgba(255,84,112,0.3); }
+        .match-result-tag {
+            width: 44px; text-align: center;
+            font-weight: 900; font-size: 13px;
+            padding: 6px 0; border-radius: 8px;
+        }
+        .match-result-tag.win { background: rgba(0,224,138,0.15); color: var(--emerald); }
+        .match-result-tag.loss { background: rgba(255,84,112,0.15); color: var(--red); }
+        .match-info { flex: 1; min-width: 0; }
+        .match-map { font-size: 14px; font-weight: 700; }
+        .match-meta { font-size: 11px; color: var(--hint); margin-top: 2px; }
+        .match-elo { font-size: 14px; font-weight: 800; text-align: right; }
+        .match-elo.up { color: var(--emerald); }
+        .match-elo.down { color: var(--red); }
+
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0;
             display: flex; justify-content: space-around;
@@ -246,8 +306,7 @@
             font-size: 13px; font-weight: 600; opacity: 0;
             transition: all 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
             pointer-events: none; border: 1px solid var(--border-strong);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.55); z-index: 200;
-            max-width: 80vw; text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.55); z-index: 999; max-width: 80vw; text-align: center;
         }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         #avatarFileInput, #clubLogoFileInput { display: none; }
@@ -293,132 +352,57 @@
         .friend-action.pending { background: rgba(0,224,138,0.15); color: var(--emerald); }
         .friend-action.accept { background: var(--emerald); color: #04140e; }
         .friend-action.decline { background: rgba(255,84,112,0.15); color: var(--red); }
-        .empty {
-            text-align: center; padding: 24px 12px; color: var(--hint);
-            font-size: 13px;
-        }
-        .club-card {
-            background: linear-gradient(140deg, rgba(0,224,138,0.08), rgba(0,184,116,0.02) 45%, rgba(5,10,8,0.6));
-            border: 1px solid var(--border-strong);
-            border-radius: 22px; padding: 20px; margin-bottom: 14px;
-            position: relative; overflow: hidden;
-        }
-        .club-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
-        .club-logo {
-            width: 72px; height: 72px; border-radius: 20px;
-            background: linear-gradient(135deg, var(--emerald), var(--emerald-2));
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 900; font-size: 26px; color: #04140e;
-            overflow: hidden; flex-shrink: 0;
-            box-shadow: 0 0 0 2px rgba(0,224,138,0.2), 0 0 16px rgba(0,224,138,0.2);
-        }
-        .club-logo img { width: 100%; height: 100%; object-fit: cover; }
-        .club-name { font-size: 20px; font-weight: 800; }
-        .club-tag { font-size: 12px; color: var(--emerald); font-weight: 700; margin-top: 3px; letter-spacing: 1px; }
-        .club-desc { color: var(--hint); font-size: 13px; line-height: 1.5; margin-bottom: 14px; }
+        .empty { text-align: center; padding: 24px 12px; color: var(--hint); font-size: 13px; }
 
         /* CHAT */
-        .chat-list-item {
-            display: flex; align-items: center; gap: 12px;
-            padding: 14px; background: var(--card); border: 1px solid var(--border);
-            border-radius: 14px; margin-bottom: 8px; cursor: pointer;
-        }
+        .chat-list-item { display: flex; align-items: center; gap: 12px; padding: 14px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 8px; cursor: pointer; }
         .chat-list-item:active { border-color: var(--border-strong); }
-        .chat-list-avatar {
-            width: 44px; height: 44px; border-radius: 50%;
-            background: linear-gradient(135deg, var(--emerald), var(--emerald-2));
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 800; font-size: 16px; color: #04140e;
-            overflow: hidden; flex-shrink: 0;
-        }
+        .chat-list-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--emerald), var(--emerald-2)); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #04140e; overflow: hidden; flex-shrink: 0; }
         .chat-list-avatar.square { border-radius: 14px; }
         .chat-list-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .chat-list-info { flex: 1; min-width: 0; }
         .chat-list-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .chat-list-preview { font-size: 12px; color: var(--hint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
 
-        .chat-view {
-            position: fixed; inset: 0; z-index: 400;
-            background: var(--bg);
-            display: none;
-            flex-direction: column;
-        }
+        .chat-view { position: fixed; inset: 0; z-index: 400; background: var(--bg); display: none; flex-direction: column; }
         .chat-view.active { display: flex; }
-        .chat-view-header {
-            display: flex; align-items: center; gap: 12px;
-            padding: 12px 14px;
-            background: rgba(5,8,7,0.9);
-            border-bottom: 1px solid var(--border);
-            flex-shrink: 0;
-        }
-        .chat-back-btn {
-            background: none; border: none; color: var(--emerald);
-            font-size: 22px; cursor: pointer; padding: 4px 8px;
-            font-family: inherit;
-        }
-        .chat-view-title { font-size: 15px; font-weight: 700; flex: 1; min-width: 0;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .chat-view-header { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: rgba(5,8,7,0.9); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+        .chat-back-btn { background: none; border: none; color: var(--emerald); font-size: 22px; cursor: pointer; padding: 4px 8px; font-family: inherit; }
+        .chat-view-title { font-size: 15px; font-weight: 700; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 14px 12px; display: flex; flex-direction: column; gap: 8px; }
+        .chat-bubble { max-width: 78%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.4; word-wrap: break-word; position: relative; }
+        .chat-bubble.me { align-self: flex-end; background: linear-gradient(135deg, #00e08a, #00b874); color: #04140e; border-bottom-right-radius: 4px; }
+        .chat-bubble.them { align-self: flex-start; background: rgba(0,224,138,0.08); border: 1px solid var(--border); color: var(--text); border-bottom-left-radius: 4px; }
+        .chat-bubble-author { font-size: 11px; font-weight: 700; color: var(--emerald); margin-bottom: 3px; }
+        .chat-bubble-time { font-size: 10px; opacity: 0.6; margin-top: 4px; text-align: right; }
+        .chat-input-bar { display: flex; gap: 8px; padding: 10px 12px; background: rgba(5,8,7,0.9); border-top: 1px solid var(--border); flex-shrink: 0; }
+        .chat-input-bar input { flex: 1; background: rgba(0,224,138,0.05); border: 1px solid var(--border); border-radius: 22px; padding: 12px 16px; color: var(--text); font-family: inherit; font-size: 14px; outline: none; }
+        .chat-input-bar input:focus { border-color: var(--border-strong); }
+        .chat-send-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--emerald); color: #04140e; border: none; font-size: 18px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+        .chat-send-btn:active { transform: scale(0.9); }
 
-        .chat-messages {
-            flex: 1; overflow-y: auto;
-            padding: 14px 12px;
-            display: flex; flex-direction: column; gap: 8px;
+        /* PLAYER MODAL */
+        .player-modal {
+            position: fixed; inset: 0; z-index: 500;
+            background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
+            display: none; align-items: flex-start; justify-content: center;
+            padding: 20px; overflow-y: auto;
         }
-        .chat-bubble {
-            max-width: 78%;
-            padding: 10px 14px;
-            border-radius: 16px;
-            font-size: 14px;
-            line-height: 1.4;
-            word-wrap: break-word;
+        .player-modal.active { display: flex; }
+        .player-modal-inner {
+            width: 100%; max-width: 500px;
+            background: #0e1a16;
+            border: 1px solid var(--border-strong);
+            border-radius: 22px; padding: 20px;
+            margin: 20px 0;
             position: relative;
         }
-        .chat-bubble.me {
-            align-self: flex-end;
-            background: linear-gradient(135deg, #00e08a, #00b874);
-            color: #04140e;
-            border-bottom-right-radius: 4px;
+        .player-modal-close {
+            position: absolute; top: 12px; right: 12px;
+            background: rgba(255,255,255,0.06); border: none; color: var(--text);
+            width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+            font-size: 18px; font-family: inherit;
         }
-        .chat-bubble.them {
-            align-self: flex-start;
-            background: rgba(0,224,138,0.08);
-            border: 1px solid var(--border);
-            color: var(--text);
-            border-bottom-left-radius: 4px;
-        }
-        .chat-bubble-author {
-            font-size: 11px; font-weight: 700; color: var(--emerald);
-            margin-bottom: 3px;
-        }
-        .chat-bubble-time {
-            font-size: 10px; opacity: 0.6; margin-top: 4px; text-align: right;
-        }
-        .chat-input-bar {
-            display: flex; gap: 8px; padding: 10px 12px;
-            background: rgba(5,8,7,0.9);
-            border-top: 1px solid var(--border);
-            flex-shrink: 0;
-        }
-        .chat-input-bar input {
-            flex: 1;
-            background: rgba(0,224,138,0.05);
-            border: 1px solid var(--border);
-            border-radius: 22px;
-            padding: 12px 16px;
-            color: var(--text);
-            font-family: inherit;
-            font-size: 14px;
-            outline: none;
-        }
-        .chat-input-bar input:focus { border-color: var(--border-strong); }
-        .chat-send-btn {
-            width: 44px; height: 44px; border-radius: 50%;
-            background: var(--emerald); color: #04140e; border: none;
-            font-size: 18px; cursor: pointer; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .chat-send-btn:active { transform: scale(0.9); }
-        .chat-send-btn:disabled { opacity: 0.5; }
     </style>
 </head>
 <body>
@@ -434,9 +418,7 @@
             <div class="elo-label">Ваш рейтинг</div>
             <div class="elo-value" id="eloValue">—</div>
             <div class="elo-level" id="eloLevel">Уровень —</div>
-            <div class="elo-progress">
-                <div class="elo-progress-bar" id="eloProgress"></div>
-            </div>
+            <div class="elo-progress"><div class="elo-progress-bar" id="eloProgress"></div></div>
         </div>
 
         <div class="stats-row">
@@ -450,18 +432,10 @@
 
         <div class="section-title">Быстрые действия</div>
         <div class="menu-grid">
-            <button class="menu-item" onclick="openFriendsPage()">
-                <span class="menu-icon">👥</span> Друзья
-            </button>
-            <button class="menu-item" onclick="openClubPage()">
-                <span class="menu-icon">🛡️</span> Клуб
-            </button>
-            <button class="menu-item" onclick="showToast('Раздел в разработке')">
-                <span class="menu-icon">📊</span> Статистика
-            </button>
-            <button class="menu-item" onclick="openChatPage()">
-                <span class="menu-icon">💬</span> Чаты
-            </button>
+            <button class="menu-item" onclick="openFriendsPage()"><span class="menu-icon">👥</span> Друзья</button>
+            <button class="menu-item" onclick="openClubPage()"><span class="menu-icon">🛡️</span> Клуб</button>
+            <button class="menu-item" onclick="showToast('Раздел в разработке')"><span class="menu-icon">📊</span> Статистика</button>
+            <button class="menu-item" onclick="openChatPage()"><span class="menu-icon">💬</span> Чаты</button>
         </div>
 
         <div class="section-title">Лидерборд</div>
@@ -470,41 +444,21 @@
 
     <!-- ============ PROFILE ============ -->
     <div class="container page" id="page-profile">
-        <div class="profile-header">
-            <div class="profile-avatar-wrap">
-                <div class="profile-avatar" id="profileAvatar">?</div>
-                <button class="avatar-edit-btn" onclick="openAvatarSheet()">✎</button>
-            </div>
-            <div class="profile-name" id="profileName">—</div>
-            <div class="profile-username" id="profileUsername">@—</div>
-
-            <div class="profile-fields">
-                <div>
-                    <label class="field-label">Никнейм</label>
-                    <input type="text" class="field-input" id="nicknameInput" placeholder="Введите ваш никнейм" maxlength="32" autocomplete="off">
-                </div>
-                <div>
-                    <label class="field-label">Standoff 2 ID</label>
-                    <input type="text" class="field-input" id="standoffIdInput" placeholder="Введите ваш ID из Standoff 2" maxlength="64" autocomplete="off">
-                </div>
-            </div>
-
-            <button class="save-btn" id="saveBtn" onclick="saveProfile()">💾 СОХРАНИТЬ</button>
-        </div>
+        <div id="profileContent"></div>
     </div>
 
     <!-- ============ FRIENDS ============ -->
     <div class="container page" id="page-friends">
-        <div class="profile-header">
+        <div class="profile-hero">
             <h3 style="margin-bottom: 14px;">🔍 Поиск друзей</h3>
             <div style="display: flex; gap: 8px;">
                 <input type="text" class="field-input" id="friendSearchInput" placeholder="Никнейм или @username" autocomplete="off">
-                <button class="save-btn" style="width: auto; padding: 14px 18px; margin: 0;" onclick="searchFriends()">Найти</button>
+                <button class="profile-action-btn edit" style="width: auto; padding: 14px 18px; margin: 0;" onclick="searchFriends()">Найти</button>
             </div>
             <div id="friendSearchResults" style="margin-top: 14px;"></div>
         </div>
 
-        <div class="profile-header">
+        <div class="profile-hero">
             <h3 style="margin-bottom: 14px;">👥 Мои друзья</h3>
             <div id="friendsList" style="margin-top: 14px;"></div>
         </div>
@@ -515,7 +469,7 @@
         <div id="clubContent"><div class="empty">Загрузка...</div></div>
     </div>
 
-    <!-- ============ CHAT LIST ============ -->
+    <!-- ============ CHAT ============ -->
     <div class="container page" id="page-chat">
         <div class="section-title" style="margin-top: 0;">Чаты</div>
         <div id="chatList"><div class="empty">Загрузка...</div></div>
@@ -523,21 +477,13 @@
 
     <!-- ============ NAV ============ -->
     <nav class="bottom-nav">
-        <button class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard')">
-            <span class="nav-icon">🏠</span><span>Главная</span>
-        </button>
-        <button class="nav-item" data-page="profile" onclick="switchPage('profile')">
-            <span class="nav-icon">👤</span><span>Профиль</span>
-        </button>
-        <button class="nav-item" data-page="club" onclick="openClubPage()">
-            <span class="nav-icon">🛡️</span><span>Клуб</span>
-        </button>
-        <button class="nav-item" data-page="chat" onclick="openChatPage()">
-            <span class="nav-icon">💬</span><span>Чаты</span>
-        </button>
+        <button class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard')"><span class="nav-icon">🏠</span><span>Главная</span></button>
+        <button class="nav-item" data-page="profile" onclick="switchPage('profile')"><span class="nav-icon">👤</span><span>Профиль</span></button>
+        <button class="nav-item" data-page="club" onclick="openClubPage()"><span class="nav-icon">🛡️</span><span>Клуб</span></button>
+        <button class="nav-item" data-page="chat" onclick="openChatPage()"><span class="nav-icon">💬</span><span>Чаты</span></button>
     </nav>
 
-    <!-- ============ CHAT VIEW (полноэкранный) ============ -->
+    <!-- ============ CHAT VIEW ============ -->
     <div class="chat-view" id="chatView">
         <div class="chat-view-header">
             <button class="chat-back-btn" onclick="closeChatView()">←</button>
@@ -551,6 +497,14 @@
         </div>
     </div>
 
+    <!-- ============ PLAYER MODAL ============ -->
+    <div class="player-modal" id="playerModal" onclick="if(event.target===this)closePlayerModal()">
+        <div class="player-modal-inner" id="playerModalInner">
+            <button class="player-modal-close" onclick="closePlayerModal()">×</button>
+            <div id="playerModalContent"><div class="empty">Загрузка...</div></div>
+        </div>
+    </div>
+
     <!-- ============ SHEETS ============ -->
     <div class="sheet-overlay" id="sheetOverlay" onclick="closeAllSheets()"></div>
     <div class="sheet" id="avatarSheet">
@@ -560,7 +514,6 @@
         <button class="sheet-option" onclick="removeAvatar()" style="color: var(--red);"><span style="font-size:18px;">🗑️</span> Удалить аватар</button>
         <button class="sheet-cancel" onclick="closeAllSheets()">ОТМЕНА</button>
     </div>
-
     <div class="sheet" id="clubLogoSheet">
         <div class="sheet-title">Эмблема клуба</div>
         <button class="sheet-option" onclick="pickClubLogoFromGallery()"><span style="font-size:18px;">🖼️</span> Загрузить из галереи</button>
@@ -579,7 +532,6 @@
         const SUPABASE_URL = 'https://mfvtdsgjejilajxxwbts.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1mdnRkc2dqZWppbGFqeHh3YnRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxNjQwMzAsImV4cCI6MjEwNDc0MDAzMH0.RdmxBLwFOMhNzZceU21yyorm7Xh_zOJmwv0QogD5iwo';
         const STORAGE_BUCKET = 'avatars';
-
         const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // ============================================================
@@ -587,56 +539,47 @@
         // ============================================================
         const tg = window.Telegram?.WebApp;
         let currentUser = null;
-
-        if (tg) {
-            tg.ready();
-            tg.expand();
-        }
+        if (tg) { tg.ready(); tg.expand(); }
 
         // ============================================================
         // STATE
         // ============================================================
-        let myClub = null;              // {club, members[]}
-        let currentChat = null;         // {type:'club'|'dm', id, name, avatar}
-        let chatChannel = null;         // Realtime channel
+        let myClub = null;
+        let currentChat = null;
+        let chatChannel = null;
         let clubChannel = null;
+        let profileEditMode = false;
 
         // ============================================================
         // INIT
         // ============================================================
         async function init() {
-            if (!tg && !location.search.includes('dev=1')) {
-                showToast('Откройте приложение через Telegram');
-                return;
-            }
+            if (!tg && !location.search.includes('dev=1')) { showToast('Откройте через Telegram'); return; }
 
             let user = tg?.initDataUnsafe?.user;
-
             if (!user && (location.hostname === 'localhost' || location.search.includes('dev=1'))) {
-                const devId = Number(new URLSearchParams(location.search).get('id')) || 999999999;
-                user = { id: devId, first_name: 'DevUser' + devId, username: 'dev' + devId, photo_url: null };
+                const params = new URLSearchParams(location.search);
+                const devId = Number(params.get('id')) || 999999999;
+                const devName = params.get('name') || ('DevUser' + devId);
+                user = { id: devId, first_name: devName, username: 'dev' + devId, photo_url: null };
                 console.warn('⚠️ DEV MODE', user);
             }
-
             if (!user) { showToast('Не удалось получить данные Telegram'); return; }
 
             setHeaderAvatar(user.photo_url, user.first_name);
 
             try {
-                const { data, error } = await sb
-                    .from('users')
-                    .upsert({
-                        telegram_id: user.id,
-                        username: user.username || null,
-                        display_name: user.first_name || user.username || 'Игрок',
-                        photo_url: user.photo_url || null
-                    }, { onConflict: 'telegram_id' })
-                    .select()
-                    .single();
+                const { data, error } = await sb.from('users').upsert({
+                    telegram_id: user.id,
+                    username: user.username || null,
+                    display_name: user.first_name || user.username || 'Игрок',
+                    photo_url: user.photo_url || null
+                }, { onConflict: 'telegram_id' }).select().single();
                 if (error) throw error;
 
                 currentUser = data;
-                renderAll();
+                renderDashboard(currentUser);
+                loadProfile(currentUser);
                 loadLeaderboard();
             } catch (e) {
                 console.error('Init error:', e);
@@ -645,13 +588,8 @@
         }
 
         // ============================================================
-        // RENDER
+        // DASHBOARD
         // ============================================================
-        function renderAll() {
-            renderDashboard(currentUser);
-            renderProfile(currentUser);
-        }
-
         function renderDashboard(user) {
             const winrate = user.matches_played > 0 ? Math.round((user.wins / user.matches_played) * 100) : 0;
             document.getElementById('eloValue').textContent = user.elo ?? 1000;
@@ -661,25 +599,6 @@
             document.getElementById('statWinrate').textContent = winrate + '%';
             const progress = ((user.elo ?? 1000) % 250) / 250 * 100;
             setTimeout(() => { document.getElementById('eloProgress').style.width = progress + '%'; }, 200);
-        }
-
-        function renderProfile(user) {
-            document.getElementById('profileName').textContent = user.display_name || 'Без имени';
-            document.getElementById('profileUsername').innerHTML = user.username ? `@<span>${user.username}</span>` : '@—';
-            document.getElementById('standoffIdInput').value = user.standoff_id || '';
-            document.getElementById('nicknameInput').value = user.display_name || '';
-            renderProfileAvatar(user);
-        }
-
-        function renderProfileAvatar(user) {
-            const src = user.custom_avatar || user.photo_url;
-            const initial = (user.display_name || 'U')[0].toUpperCase();
-            const profileEl = document.getElementById('profileAvatar');
-            if (src) profileEl.innerHTML = `<img src="${src}" alt="">`;
-            else profileEl.textContent = initial;
-            const headerEl = document.getElementById('headerAvatar');
-            if (src) headerEl.innerHTML = `<img src="${src}" alt="">`;
-            else headerEl.textContent = initial;
         }
 
         function setHeaderAvatar(photoUrl, firstName) {
@@ -692,38 +611,224 @@
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             const target = document.getElementById('page-' + page);
             if (target) target.classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => {
-                n.classList.toggle('active', n.dataset.page === page);
-            });
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === page));
             haptic();
         }
 
         // ============================================================
-        // PROFILE SAVE
+        // PROFILE (MAIN — VIEW/EDIT)
         // ============================================================
+        function loadProfile(user) {
+            profileEditMode = false;
+            renderProfileView(user);
+        }
+
+        function renderProfileView(user) {
+            const container = document.getElementById('profileContent');
+            const avatarSrc = user.custom_avatar || user.photo_url;
+            const initial = (user.display_name || 'U')[0].toUpperCase();
+            const avatarHTML = avatarSrc ? `<img src="${avatarSrc}" alt="">` : initial;
+            const winrate = user.matches_played > 0 ? Math.round((user.wins / user.matches_played) * 100) : 0;
+            const hours = Math.round(((user.matches_played || 0) * 45) / 60);
+
+            container.innerHTML = `
+                <div class="profile-hero">
+                    <div class="profile-hero-inner">
+                        <div class="profile-avatar-wrap">
+                            <div class="profile-avatar">${avatarHTML}</div>
+                            <button class="avatar-edit-btn" onclick="openAvatarSheet()">✎</button>
+                        </div>
+                        <div class="profile-name">${escapeHtml(user.display_name || 'Без имени')}</div>
+                        <div class="profile-username">${user.username ? '@<span>' + escapeHtml(user.username) + '</span>' : '@—'}</div>
+                        <div class="profile-level-badge">⚡ Уровень ${user.level ?? 1} · Faceit</div>
+                    </div>
+                </div>
+
+                <div class="profile-stats-grid">
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">${user.elo ?? 1000}</div>
+                        <div class="profile-stat-label">ELO</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">${winrate}%</div>
+                        <div class="profile-stat-label">Winrate</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">${hours}ч</div>
+                        <div class="profile-stat-label">На Faceit</div>
+                    </div>
+                </div>
+
+                <div class="profile-view-row">
+                    <span class="profile-view-label">Standoff 2 ID</span>
+                    <span class="profile-view-value">${escapeHtml(user.standoff_id || '—')}</span>
+                </div>
+                <div class="profile-view-row">
+                    <span class="profile-view-label">Матчей</span>
+                    <span class="profile-view-value">${user.matches_played ?? 0}</span>
+                </div>
+                <div class="profile-view-row">
+                    <span class="profile-view-label">Побед</span>
+                    <span class="profile-view-value">${user.wins ?? 0}</span>
+                </div>
+
+                <button class="profile-action-btn edit" onclick="enterProfileEditMode()">✏️ РЕДАКТИРОВАТЬ</button>
+
+                <div class="section-title" style="margin-top: 24px;">История матчей</div>
+                <div id="profileMatchHistory"><div class="empty">Матчей пока нет</div></div>
+            `;
+        }
+
+        function enterProfileEditMode() {
+            profileEditMode = true;
+            renderProfileEdit(currentUser);
+        }
+
+        function renderProfileEdit(user) {
+            const container = document.getElementById('profileContent');
+            const avatarSrc = user.custom_avatar || user.photo_url;
+            const initial = (user.display_name || 'U')[0].toUpperCase();
+            const avatarHTML = avatarSrc ? `<img src="${avatarSrc}" alt="">` : initial;
+
+            container.innerHTML = `
+                <div class="profile-hero">
+                    <div class="profile-hero-inner">
+                        <div class="profile-avatar-wrap">
+                            <div class="profile-avatar">${avatarHTML}</div>
+                            <button class="avatar-edit-btn" onclick="openAvatarSheet()">✎</button>
+                        </div>
+                        <div class="profile-name">Редактирование профиля</div>
+                    </div>
+
+                    <div class="profile-fields" style="margin-top: 20px;">
+                        <div>
+                            <label class="field-label">Никнейм</label>
+                            <input type="text" class="field-input" id="editNickname" value="${escapeHtml(user.display_name || '')}" maxlength="32" autocomplete="off">
+                        </div>
+                        <div>
+                            <label class="field-label">Standoff 2 ID</label>
+                            <input type="text" class="field-input" id="editStandoff" value="${escapeHtml(user.standoff_id || '')}" maxlength="64" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <button class="profile-action-btn save" id="saveProfileBtn" onclick="saveProfile()">💾 СОХРАНИТЬ</button>
+                    <button class="profile-action-btn cancel" onclick="cancelProfileEdit()">ОТМЕНА</button>
+                </div>
+            `;
+        }
+
+        function cancelProfileEdit() {
+            profileEditMode = false;
+            renderProfileView(currentUser);
+        }
+
         async function saveProfile() {
             if (!currentUser) return;
-            const btn = document.getElementById('saveBtn');
-            const standoffId = document.getElementById('standoffIdInput').value.trim();
-            const nickname = document.getElementById('nicknameInput').value.trim();
-            if (!nickname) { showToast('Никнейм не может быть пустым'); return; }
+            const btn = document.getElementById('saveProfileBtn');
+            const nickname = document.getElementById('editNickname').value.trim();
+            const standoffId = document.getElementById('editStandoff').value.trim();
 
-            btn.disabled = true; btn.textContent = 'СОХРАНЕНИЕ...';
+            if (!nickname) { showToast('Никнейм не может быть пустым'); return; }
+            if (nickname.length > 32) { showToast('Никнейм слишком длинный'); return; }
+
+            btn.disabled = true;
+            btn.textContent = 'СОХРАНЕНИЕ...';
+
             try {
-                const { data, error } = await sb
-                    .from('users')
-                    .update({ standoff_id: standoffId || null, display_name: nickname })
+                const { data, error } = await sb.from('users')
+                    .update({ display_name: nickname, standoff_id: standoffId || null })
                     .eq('telegram_id', currentUser.telegram_id)
                     .select().single();
                 if (error) throw error;
                 currentUser = data;
-                renderAll();
+                renderDashboard(currentUser);
+                profileEditMode = false;
+                renderProfileView(currentUser);
                 showToast('✅ Профиль сохранён');
+                haptic('medium');
             } catch (e) {
-                showToast('Ошибка: ' + e.message);
-            } finally {
-                btn.disabled = false; btn.textContent = '💾 СОХРАНИТЬ';
+                console.error(e);
+                showToast('Ошибка: ' + (e?.message || e));
+                btn.disabled = false;
+                btn.textContent = '💾 СОХРАНИТЬ';
             }
+        }
+
+        // ============================================================
+        // PUBLIC PROFILE OF OTHER PLAYER (MODAL)
+        // ============================================================
+        async function openPlayerProfile(userId) {
+            if (String(userId) === String(currentUser?.telegram_id)) {
+                switchPage('profile');
+                return;
+            }
+
+            const modal = document.getElementById('playerModal');
+            const content = document.getElementById('playerModalContent');
+            content.innerHTML = '<div class="empty">Загрузка...</div>';
+            modal.classList.add('active');
+
+            try {
+                const { data: user, error } = await sb.from('users')
+                    .select('telegram_id, display_name, username, custom_avatar, photo_url, elo, level, matches_played, wins, standoff_id')
+                    .eq('telegram_id', userId).single();
+                if (error) throw error;
+
+                const avatarSrc = user.custom_avatar || user.photo_url;
+                const initial = (user.display_name || 'U')[0].toUpperCase();
+                const avatarHTML = avatarSrc ? `<img src="${avatarSrc}" alt="">` : initial;
+                const winrate = user.matches_played > 0 ? Math.round((user.wins / user.matches_played) * 100) : 0;
+                const hours = Math.round(((user.matches_played || 0) * 45) / 60);
+
+                content.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: center; padding: 4px 0 10px;">
+                        <div class="profile-avatar" style="width: 90px; height: 90px; font-size: 34px; margin-bottom: 12px;">${avatarHTML}</div>
+                        <div style="font-size: 20px; font-weight: 800; text-align: center;">${escapeHtml(user.display_name || 'Игрок')}</div>
+                        <div style="font-size: 13px; color: var(--hint); margin-top: 4px;">
+                            ${user.username ? '@' + escapeHtml(user.username) : '@—'}
+                        </div>
+                        <div class="profile-level-badge" style="margin-top: 10px;">⚡ Уровень ${user.level ?? 1}</div>
+                    </div>
+
+                    <div class="profile-stats-grid">
+                        <div class="profile-stat">
+                            <div class="profile-stat-value">${user.elo ?? 1000}</div>
+                            <div class="profile-stat-label">ELO</div>
+                        </div>
+                        <div class="profile-stat">
+                            <div class="profile-stat-value">${winrate}%</div>
+                            <div class="profile-stat-label">Winrate</div>
+                        </div>
+                        <div class="profile-stat">
+                            <div class="profile-stat-value">${hours}ч</div>
+                            <div class="profile-stat-label">На Faceit</div>
+                        </div>
+                    </div>
+
+                    <div class="profile-view-row">
+                        <span class="profile-view-label">Standoff 2 ID</span>
+                        <span class="profile-view-value">${escapeHtml(user.standoff_id || '—')}</span>
+                    </div>
+                    <div class="profile-view-row">
+                        <span class="profile-view-label">Матчей</span>
+                        <span class="profile-view-value">${user.matches_played ?? 0}</span>
+                    </div>
+                    <div class="profile-view-row">
+                        <span class="profile-view-label">Побед</span>
+                        <span class="profile-view-value">${user.wins ?? 0}</span>
+                    </div>
+
+                    <div class="section-title" style="margin-top: 20px;">История матчей</div>
+                    <div id="publicMatchHistory"><div class="empty">Матчей пока нет</div></div>
+                `;
+            } catch (e) {
+                console.error(e);
+                content.innerHTML = '<div class="empty" style="color: var(--red);">Не удалось загрузить профиль</div>';
+            }
+        }
+
+        function closePlayerModal() {
+            document.getElementById('playerModal').classList.remove('active');
         }
 
         // ============================================================
@@ -732,12 +837,10 @@
         function openAvatarSheet() {
             document.getElementById('sheetOverlay').classList.add('active');
             document.getElementById('avatarSheet').classList.add('active');
-            haptic();
         }
         function openClubLogoSheet() {
             document.getElementById('sheetOverlay').classList.add('active');
             document.getElementById('clubLogoSheet').classList.add('active');
-            haptic();
         }
         function closeAllSheets() {
             document.querySelectorAll('.sheet').forEach(s => s.classList.remove('active'));
@@ -760,15 +863,12 @@
         }
 
         document.getElementById('avatarFileInput').addEventListener('change', async (e) => {
-            const file = e.target.files?.[0];
-            e.target.value = '';
+            const file = e.target.files?.[0]; e.target.value = '';
             if (!file) return;
             await uploadAvatarFile(file);
         });
-
         document.getElementById('clubLogoFileInput').addEventListener('change', async (e) => {
-            const file = e.target.files?.[0];
-            e.target.value = '';
+            const file = e.target.files?.[0]; e.target.value = '';
             if (!file || !myClub?.club) return;
             await uploadClubLogo(file);
         });
@@ -782,16 +882,19 @@
                 const { error: upErr } = await sb.storage.from(STORAGE_BUCKET)
                     .upload(path, blob, { contentType: 'image/jpeg', upsert: true });
                 if (upErr) throw upErr;
-
                 const { data: urlData } = sb.storage.from(STORAGE_BUCKET).getPublicUrl(path);
+
                 const { data, error } = await sb.from('users')
                     .update({ custom_avatar: urlData.publicUrl })
                     .eq('telegram_id', currentUser.telegram_id)
                     .select().single();
                 if (error) throw error;
-
                 currentUser = data;
-                renderProfileAvatar(currentUser);
+
+                setHeaderAvatar(currentUser.custom_avatar || currentUser.photo_url, currentUser.display_name);
+                if (profileEditMode) renderProfileEdit(currentUser);
+                else renderProfileView(currentUser);
+
                 showToast('✅ Аватар обновлён');
             } catch (e) {
                 console.error(e);
@@ -809,17 +912,10 @@
                 if (upErr) throw upErr;
                 const { data: urlData } = sb.storage.from(STORAGE_BUCKET).getPublicUrl(path);
 
-                const { error } = await sb.from('clubs')
-                    .update({ logo_url: urlData.publicUrl })
-                    .eq('id', myClub.club.id);
-                if (error) throw error;
-
+                await sb.from('clubs').update({ logo_url: urlData.publicUrl }).eq('id', myClub.club.id);
                 showToast('✅ Эмблема обновлена');
                 openClubPage();
-            } catch (e) {
-                console.error(e);
-                showToast('Ошибка: ' + e.message);
-            }
+            } catch (e) { console.error(e); showToast('Ошибка: ' + e.message); }
         }
 
         async function uploadAvatarFromUrl(url) {
@@ -830,10 +926,7 @@
                 const blob = await imgRes.blob();
                 const file = new File([blob], 'avatar.jpg', { type: blob.type || 'image/jpeg' });
                 await uploadAvatarFile(file);
-            } catch (e) {
-                console.error(e);
-                showToast('Ошибка загрузки фото');
-            }
+            } catch (e) { console.error(e); showToast('Ошибка загрузки'); }
         }
 
         function compressImage(file, maxSize, quality) {
@@ -845,18 +938,12 @@
                 img.onerror = reject;
                 img.onload = () => {
                     let { width, height } = img;
-                    if (width > height) {
-                        if (width > maxSize) { height = Math.round(height * maxSize / width); width = maxSize; }
-                    } else {
-                        if (height > maxSize) { width = Math.round(width * maxSize / height); height = maxSize; }
-                    }
+                    if (width > height) { if (width > maxSize) { height = Math.round(height * maxSize / width); width = maxSize; } }
+                    else { if (height > maxSize) { width = Math.round(width * maxSize / height); height = maxSize; } }
                     const canvas = document.createElement('canvas');
                     canvas.width = width; canvas.height = height;
                     canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-                    canvas.toBlob(
-                        (blob) => blob ? resolve(blob) : reject(new Error('Сжатие не удалось')),
-                        'image/jpeg', quality
-                    );
+                    canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error('Сжатие не удалось')), 'image/jpeg', quality);
                 };
                 reader.readAsDataURL(file);
             });
@@ -872,7 +959,9 @@
                     .select().single();
                 if (error) throw error;
                 currentUser = data;
-                renderProfileAvatar(currentUser);
+                setHeaderAvatar(currentUser.photo_url, currentUser.display_name);
+                if (profileEditMode) renderProfileEdit(currentUser);
+                else renderProfileView(currentUser);
                 showToast('Аватар удалён');
             } catch (e) { showToast('Ошибка'); }
         }
@@ -887,7 +976,7 @@
         }
 
         // ============================================================
-        // FIND MATCH (заглушка)
+        // FIND MATCH (заглушка — Этап 2 будет)
         // ============================================================
         async function findMatch() {
             if (!currentUser) { showToast('Сначала авторизуйтесь'); return; }
@@ -895,13 +984,11 @@
             const loading = document.getElementById('loading');
             btn.disabled = true; btn.textContent = 'ПОИСК...';
             loading.classList.add('active');
-
             try {
                 await sb.from('queue').upsert({
                     telegram_id: currentUser.telegram_id,
                     joined_at: new Date().toISOString()
                 }, { onConflict: 'telegram_id' });
-
                 setTimeout(() => {
                     showToast('Поиск запущен! Ожидайте соперника.');
                     btn.disabled = false; btn.textContent = '🎮 ИГРАТЬ';
@@ -930,7 +1017,7 @@
                     const initial = (user.display_name || 'U')[0].toUpperCase();
                     const av = src ? `<img src="${src}" alt="">` : initial;
                     return `
-                        <div class="leaderboard-item">
+                        <div class="leaderboard-item" onclick="openPlayerProfile(${user.telegram_id})">
                             <span class="leaderboard-rank">#${i + 1}</span>
                             <div class="lb-avatar">${av}</div>
                             <span class="leaderboard-name">${escapeHtml(user.display_name || 'Игрок')}</span>
@@ -978,9 +1065,9 @@
                     let action;
                     if (rel === 'accepted') action = `<button class="friend-action pending" disabled>✓ Друг</button>`;
                     else if (rel === 'pending') action = `<button class="friend-action pending" disabled>⏳ Запрос</button>`;
-                    else action = `<button class="friend-action add" onclick="sendFriendRequest(${u.telegram_id}, this)">+ Добавить</button>`;
+                    else action = `<button class="friend-action add" onclick="event.stopPropagation();sendFriendRequest(${u.telegram_id}, this)">+ Добавить</button>`;
                     return `
-                        <div class="leaderboard-item">
+                        <div class="leaderboard-item" onclick="openPlayerProfile(${u.telegram_id})">
                             <div class="lb-avatar">${av}</div>
                             <div style="flex:1;min-width:0;">
                                 <div class="leaderboard-name">${escapeHtml(u.display_name || 'Игрок')}</div>
@@ -995,7 +1082,6 @@
         }
 
         async function sendFriendRequest(addresseeId, btnEl) {
-            if (!currentUser) return;
             if (btnEl) { btnEl.disabled = true; btnEl.textContent = '...'; }
             try {
                 const { error } = await sb.from('friendships').insert({
@@ -1064,17 +1150,13 @@
             const initial = (u.display_name || 'U')[0].toUpperCase();
             const av = src ? `<img src="${src}" alt="">` : initial;
             let actions = '';
-            if (mode === 'friend') {
-                actions = `<button class="friend-action decline" onclick="removeFriend(${item.id}, this)">✕</button>`;
-            } else if (mode === 'outgoing') {
-                actions = `<button class="friend-action decline" onclick="removeFriend(${item.id}, this)">Отмена</button>`;
-            } else {
-                actions = `
-                    <button class="friend-action accept" onclick="acceptFriend(${item.id}, this)">✓</button>
-                    <button class="friend-action decline" onclick="removeFriend(${item.id}, this)">✕</button>`;
-            }
+            if (mode === 'friend') actions = `<button class="friend-action decline" onclick="event.stopPropagation();removeFriend(${item.id}, this)">✕</button>`;
+            else if (mode === 'outgoing') actions = `<button class="friend-action decline" onclick="event.stopPropagation();removeFriend(${item.id}, this)">Отмена</button>`;
+            else actions = `
+                <button class="friend-action accept" onclick="event.stopPropagation();acceptFriend(${item.id}, this)">✓</button>
+                <button class="friend-action decline" onclick="event.stopPropagation();removeFriend(${item.id}, this)">✕</button>`;
             return `
-                <div class="leaderboard-item">
+                <div class="leaderboard-item" onclick="openPlayerProfile(${u.telegram_id})">
                     <div class="lb-avatar">${av}</div>
                     <div style="flex:1;min-width:0;">
                         <div class="leaderboard-name">${escapeHtml(u.display_name || 'Игрок')}</div>
@@ -1107,34 +1189,23 @@
             container.innerHTML = '<div class="empty">Загрузка...</div>';
             try {
                 const me = currentUser.telegram_id;
-
-                // Ищем моё членство
                 const { data: membership } = await sb.from('club_members')
                     .select('club_id, role').eq('telegram_id', me).maybeSingle();
 
-                if (!membership) {
-                    myClub = null;
-                    renderNoClub(container);
-                    return;
-                }
+                if (!membership) { myClub = null; renderNoClub(container); return; }
 
-                // Загружаем клуб + участников
-                const { data: club, error: cErr } = await sb.from('clubs')
-                    .select('*').eq('id', membership.club_id).single();
+                const { data: club, error: cErr } = await sb.from('clubs').select('*').eq('id', membership.club_id).single();
                 if (cErr) throw cErr;
 
-                const { data: members } = await sb.from('club_members')
-                    .select('*').eq('club_id', club.id);
-
+                const { data: members } = await sb.from('club_members').select('*').eq('club_id', club.id);
                 const memberIds = (members || []).map(m => m.telegram_id);
                 const { data: users } = await sb.from('users')
                     .select('telegram_id, display_name, username, custom_avatar, photo_url, elo')
-                    .in('telegram_id', memberIds);
+                    .in('telegram_id', memberIds.length ? memberIds : [0]);
                 const userMap = {}; (users || []).forEach(u => userMap[u.telegram_id] = u);
 
                 myClub = { club, members: (members || []).map(m => ({ ...m, user: userMap[m.telegram_id] })) };
                 myClub.club.role = membership.role;
-
                 renderMyClub(container);
             } catch (e) {
                 console.error(e);
@@ -1144,14 +1215,16 @@
 
         function renderNoClub(container) {
             container.innerHTML = `
-                <div class="profile-header">
-                    <div style="font-size:64px;margin-bottom:14px;">🛡️</div>
-                    <h3 style="margin-bottom:10px;">Вы не в клубе</h3>
-                    <p style="color:var(--hint);font-size:13px;margin-bottom:20px;">
-                        Создайте свой клуб или подайте заявку в существующий
-                    </p>
-                    <button class="save-btn" onclick="openCreateClubSheet()">➕ Создать клуб</button>
-                    <button class="save-btn secondary" onclick="openClubSearch()">🔍 Найти клуб</button>
+                <div class="profile-hero">
+                    <div class="profile-hero-inner">
+                        <div style="font-size:64px;margin-bottom:14px;">🛡️</div>
+                        <h3 style="margin-bottom:10px;">Вы не в клубе</h3>
+                        <p style="color:var(--hint);font-size:13px;margin-bottom:20px;">
+                            Создайте свой клуб или подайте заявку в существующий
+                        </p>
+                        <button class="profile-action-btn edit" onclick="openCreateClubSheet()">➕ Создать клуб</button>
+                        <button class="profile-action-btn cancel" onclick="openClubSearch()">🔍 Найти клуб</button>
+                    </div>
                 </div>
                 <div id="clubSearchResults"></div>
             `;
@@ -1170,41 +1243,35 @@
                 const av = src ? `<img src="${src}" alt="">` : initial;
                 const roleTag = m.role === 'owner' ? ' <span style="color:var(--gold);font-size:10px;">OWNER</span>' : '';
                 const kickBtn = (isOwner && m.role !== 'owner')
-                    ? `<button class="friend-action decline" onclick="kickMember(${m.telegram_id})">Кик</button>`
+                    ? `<button class="friend-action decline" onclick="event.stopPropagation();kickMember(${m.telegram_id})">Кик</button>`
                     : '';
                 return `
-                    <div class="leaderboard-item">
+                    <div class="leaderboard-item" onclick="openPlayerProfile(${m.telegram_id})">
                         <div class="lb-avatar">${av}</div>
                         <div style="flex:1;min-width:0;">
                             <div class="leaderboard-name">${escapeHtml(u.display_name || 'Игрок')}${roleTag}</div>
                             <div style="font-size:11px;color:var(--hint);">ELO ${u.elo || 1000}</div>
                         </div>
                         ${kickBtn}
-                    </div>
-                `;
+                    </div>`;
             }).join('');
 
-            // Заявки — только для owner
             const requestsHTML = isOwner ? '<div id="clubRequestsBlock"></div>' : '';
 
             container.innerHTML = `
-                <div class="club-card">
-                    <div class="club-header">
-                        <div class="club-logo" onclick="${isOwner ? 'openClubLogoSheet()' : ''}">${logoHTML}</div>
+                <div class="profile-hero">
+                    <div class="club-header" style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+                        <div class="lb-avatar" style="width:72px;height:72px;border-radius:20px;font-size:26px;cursor:${isOwner ? 'pointer' : 'default'};" onclick="${isOwner ? 'openClubLogoSheet()' : ''}">${logoHTML}</div>
                         <div style="flex:1;min-width:0;">
-                            <div class="club-name">${escapeHtml(club.name)}</div>
-                            <div class="club-tag">[${escapeHtml(club.tag)}] · ${members.length}/${club.max_members}</div>
+                            <div style="font-size:20px;font-weight:800;">${escapeHtml(club.name)}</div>
+                            <div style="font-size:12px;color:var(--emerald);font-weight:700;margin-top:3px;letter-spacing:1px;">[${escapeHtml(club.tag)}] · ${members.length}/${club.max_members}</div>
                         </div>
                     </div>
-                    ${club.description ? `<div class="club-desc">${escapeHtml(club.description)}</div>` : ''}
-                    ${isOwner ? `
-                        <button class="save-btn secondary" onclick="openEditClubSheet()">✏️ Редактировать</button>
-                    ` : ''}
-                    <button class="save-btn danger" onclick="leaveClub()">🚪 Покинуть клуб</button>
+                    ${club.description ? `<div style="color:var(--hint);font-size:13px;line-height:1.5;margin-bottom:14px;">${escapeHtml(club.description)}</div>` : ''}
+                    ${isOwner ? `<button class="profile-action-btn cancel" onclick="openEditClubSheet()">✏️ Редактировать</button>` : ''}
+                    <button class="profile-action-btn save" onclick="leaveClub()" style="background:rgba(255,84,112,0.1);color:var(--red);border:1px solid rgba(255,84,112,0.3);">🚪 Покинуть клуб</button>
                 </div>
-
                 ${requestsHTML}
-
                 <div class="section-title">Состав (${members.length}/${club.max_members})</div>
                 ${membersHTML}
             `;
@@ -1235,14 +1302,14 @@
                         const initial = (u.display_name || 'U')[0].toUpperCase();
                         const av = src ? `<img src="${src}" alt="">` : initial;
                         return `
-                            <div class="leaderboard-item">
+                            <div class="leaderboard-item" onclick="openPlayerProfile(${r.telegram_id})">
                                 <div class="lb-avatar">${av}</div>
                                 <div style="flex:1;min-width:0;">
                                     <div class="leaderboard-name">${escapeHtml(u.display_name || 'Игрок')}</div>
                                     <div style="font-size:11px;color:var(--hint);">ELO ${u.elo || 1000}</div>
                                 </div>
-                                <button class="friend-action accept" onclick="acceptClubRequest(${r.id}, ${r.telegram_id})">✓</button>
-                                <button class="friend-action decline" onclick="declineClubRequest(${r.id})">✕</button>
+                                <button class="friend-action accept" onclick="event.stopPropagation();acceptClubRequest(${r.id}, ${r.telegram_id})">✓</button>
+                                <button class="friend-action decline" onclick="event.stopPropagation();declineClubRequest(${r.id})">✕</button>
                             </div>`;
                     }).join('')}
                 `;
@@ -1251,16 +1318,8 @@
 
         async function acceptClubRequest(requestId, userId) {
             try {
-                // Проверка лимита
-                if (myClub.members.length >= myClub.club.max_members) {
-                    showToast('Клуб заполнен (макс ' + myClub.club.max_members + ')');
-                    return;
-                }
-                // Добавляем в участники
-                await sb.from('club_members').insert({
-                    club_id: myClub.club.id, telegram_id: userId, role: 'member'
-                });
-                // Обновляем статус заявки
+                if (myClub.members.length >= myClub.club.max_members) { showToast('Клуб заполнен'); return; }
+                await sb.from('club_members').insert({ club_id: myClub.club.id, telegram_id: userId, role: 'member' });
                 await sb.from('club_requests').update({ status: 'accepted' }).eq('id', requestId);
                 showToast('✅ Принят');
                 openClubPage();
@@ -1276,98 +1335,71 @@
         }
 
         async function kickMember(userId) {
-            if (!confirm('Кикнуть этого игрока?')) return;
+            if (!confirm('Кикнуть игрока?')) return;
             try {
-                await sb.from('club_members').delete()
-                    .eq('club_id', myClub.club.id).eq('telegram_id', userId);
-                showToast('Кикнут');
-                openClubPage();
+                await sb.from('club_members').delete().eq('club_id', myClub.club.id).eq('telegram_id', userId);
+                showToast('Кикнут'); openClubPage();
             } catch (e) { showToast('Ошибка'); }
         }
 
         async function leaveClub() {
             if (!confirm('Покинуть клуб?')) return;
             try {
-                await sb.from('club_members').delete()
-                    .eq('club_id', myClub.club.id).eq('telegram_id', currentUser.telegram_id);
-
-                // Если владелец — удаляем клуб
+                await sb.from('club_members').delete().eq('club_id', myClub.club.id).eq('telegram_id', currentUser.telegram_id);
                 if (myClub.club.owner_id === currentUser.telegram_id) {
                     await sb.from('clubs').delete().eq('id', myClub.club.id);
                 }
-                showToast('Вы покинули клуб');
-                myClub = null;
-                openClubPage();
+                showToast('Вы покинули клуб'); myClub = null; openClubPage();
             } catch (e) { showToast('Ошибка'); }
         }
 
-        // ==== Создание клуба ====
         function openCreateClubSheet() {
-            const name = prompt('Название клуба (2-30 символов):');
-            if (!name || name.length < 2 || name.length > 30) { if(name!==null) showToast('Неверная длина'); return; }
-            const tag = prompt('Тег клуба (2-5 букв/цифр):');
-            if (!tag || tag.length < 2 || tag.length > 5) { if(tag!==null) showToast('Неверный тег'); return; }
+            const name = prompt('Название клуба (2-30):');
+            if (!name || name.length < 2 || name.length > 30) { if (name !== null) showToast('Неверная длина'); return; }
+            const tag = prompt('Тег (2-5):');
+            if (!tag || tag.length < 2 || tag.length > 5) { if (tag !== null) showToast('Неверный тег'); return; }
             const desc = prompt('Описание (необязательно):') || '';
-
             createClub(name, tag, desc);
         }
 
         async function createClub(name, tag, description) {
             try {
-                showToast('Создание клуба...');
+                showToast('Создание...');
                 const { data: club, error } = await sb.from('clubs').insert({
                     name, tag, description, owner_id: currentUser.telegram_id, max_members: 10
                 }).select().single();
                 if (error) throw error;
-
                 await sb.from('club_members').insert({
                     club_id: club.id, telegram_id: currentUser.telegram_id, role: 'owner'
                 });
-
-                showToast('✅ Клуб создан!');
-                openClubPage();
-            } catch (e) {
-                console.error(e);
-                showToast('Ошибка: ' + e.message);
-            }
+                showToast('✅ Клуб создан!'); openClubPage();
+            } catch (e) { showToast('Ошибка: ' + e.message); }
         }
 
-        // ==== Редактирование клуба ====
         function openEditClubSheet() {
-            const name = prompt('Название:', myClub.club.name);
-            if (name === null) return;
-            const tag = prompt('Тег:', myClub.club.tag);
-            if (tag === null) return;
-            const desc = prompt('Описание:', myClub.club.description || '');
-            if (desc === null) return;
-
+            const name = prompt('Название:', myClub.club.name); if (name === null) return;
+            const tag = prompt('Тег:', myClub.club.tag); if (tag === null) return;
+            const desc = prompt('Описание:', myClub.club.description || ''); if (desc === null) return;
             sb.from('clubs').update({ name, tag, description: desc }).eq('id', myClub.club.id)
-                .then(() => { showToast('✅ Обновлено'); openClubPage(); });
+                .then(() => { showToast('✅'); openClubPage(); });
         }
 
-        // ==== Поиск клуба ====
         async function openClubSearch() {
-            const query = prompt('Поиск клуба (название или тег):');
+            const query = prompt('Поиск клуба (название/тег):');
             if (!query || query.length < 2) return;
             try {
                 const safe = query.replace(/[%_]/g, '');
                 const { data, error } = await sb.from('clubs')
                     .select('id, name, tag, description, logo_url, max_members')
-                    .or(`name.ilike.%${safe}%,tag.ilike.%${safe}%`)
-                    .limit(20);
+                    .or(`name.ilike.%${safe}%,tag.ilike.%${safe}%`).limit(20);
                 if (error) throw error;
 
                 const container = document.getElementById('clubSearchResults');
-                if (!data?.length) {
-                    container.innerHTML = '<div class="empty">Ничего не найдено</div>';
-                    return;
-                }
+                if (!data?.length) { container.innerHTML = '<div class="empty">Ничего не найдено</div>'; return; }
 
-                // Узнаем, куда уже отправлены заявки
                 const clubIds = data.map(c => c.id);
                 const { data: myReqs } = await sb.from('club_requests')
-                    .select('club_id, status').eq('telegram_id', currentUser.telegram_id)
-                    .in('club_id', clubIds);
+                    .select('club_id, status').eq('telegram_id', currentUser.telegram_id).in('club_id', clubIds);
                 const reqMap = {}; (myReqs || []).forEach(r => reqMap[r.club_id] = r.status);
 
                 container.innerHTML = '<div class="section-title">Найденные клубы</div>' + data.map(c => {
@@ -1388,9 +1420,7 @@
                             ${btn}
                         </div>`;
                 }).join('');
-            } catch (e) {
-                showToast('Ошибка поиска');
-            }
+            } catch (e) { showToast('Ошибка поиска'); }
         }
 
         async function sendClubRequest(clubId, btnEl) {
@@ -1401,17 +1431,12 @@
                 }, { onConflict: 'club_id,telegram_id' });
                 showToast('✅ Заявка отправлена');
                 if (btnEl) { btnEl.className = 'friend-action pending'; btnEl.textContent = '⏳ Заявка'; }
-            } catch (e) {
-                showToast('Ошибка: ' + e.message);
-                if (btnEl) { btnEl.disabled = false; btnEl.textContent = '+ Заявка'; }
-            }
+            } catch (e) { showToast('Ошибка: ' + e.message); if (btnEl) { btnEl.disabled = false; btnEl.textContent = '+ Заявка'; } }
         }
 
-        // ==== Realtime для клуба ====
         function subscribeClubRealtime() {
             if (!currentUser) return;
             if (clubChannel) sb.removeChannel(clubChannel);
-
             clubChannel = sb.channel('club_rt_' + currentUser.telegram_id)
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'club_members' }, () => {
                     if (document.getElementById('page-club').classList.contains('active')) loadClub();
@@ -1425,10 +1450,7 @@
         // ============================================================
         // CHAT
         // ============================================================
-        function openChatPage() {
-            switchPage('chat');
-            loadChatList();
-        }
+        function openChatPage() { switchPage('chat'); loadChatList(); }
 
         async function loadChatList() {
             if (!currentUser) return;
@@ -1438,18 +1460,13 @@
                 const me = currentUser.telegram_id;
                 const items = [];
 
-                // Клубный чат (если в клубе)
-                const { data: membership } = await sb.from('club_members')
-                    .select('club_id').eq('telegram_id', me).maybeSingle();
+                const { data: membership } = await sb.from('club_members').select('club_id').eq('telegram_id', me).maybeSingle();
                 if (membership) {
-                    const { data: club } = await sb.from('clubs')
-                        .select('id, name, tag, logo_url').eq('id', membership.club_id).single();
+                    const { data: club } = await sb.from('clubs').select('id, name, tag, logo_url').eq('id', membership.club_id).single();
                     if (club) {
                         const { data: lastMsg } = await sb.from('messages')
-                            .select('text, created_at, sender_id')
-                            .eq('club_id', club.id)
+                            .select('text, created_at').eq('club_id', club.id)
                             .order('created_at', { ascending: false }).limit(1).maybeSingle();
-
                         items.push({
                             type: 'club', id: club.id, name: club.name + ' [' + club.tag + ']',
                             avatar: club.logo_url, square: true,
@@ -1458,42 +1475,33 @@
                     }
                 }
 
-                // Личные чаты (по друзьям)
                 const { data: friends } = await sb.from('friendships')
                     .select('requester_id, addressee_id, status')
-                    .or(`requester_id.eq.${me},addressee_id.eq.${me}`)
-                    .eq('status', 'accepted');
-
+                    .or(`requester_id.eq.${me},addressee_id.eq.${me}`).eq('status', 'accepted');
                 const friendIds = (friends || []).map(f => f.requester_id === me ? f.addressee_id : f.requester_id);
 
                 if (friendIds.length) {
                     const { data: users } = await sb.from('users')
-                        .select('telegram_id, display_name, username, custom_avatar, photo_url')
+                        .select('telegram_id, display_name, custom_avatar, photo_url')
                         .in('telegram_id', friendIds);
                     const userMap = {}; (users || []).forEach(u => userMap[u.telegram_id] = u);
 
                     for (const fid of friendIds) {
                         const u = userMap[fid] || { telegram_id: fid, display_name: 'Игрок' };
-                        // последнее сообщение в диалоге
                         const { data: msgs } = await sb.from('messages')
-                            .select('text, created_at, sender_id')
+                            .select('text, created_at')
                             .or(`and(sender_id.eq.${me},recipient_id.eq.${fid}),and(sender_id.eq.${fid},recipient_id.eq.${me})`)
                             .order('created_at', { ascending: false }).limit(1);
                         const last = msgs?.[0];
                         items.push({
-                            type: 'dm', id: fid,
-                            name: u.display_name || 'Игрок',
-                            avatar: u.custom_avatar || u.photo_url,
-                            square: false,
+                            type: 'dm', id: fid, name: u.display_name || 'Игрок',
+                            avatar: u.custom_avatar || u.photo_url, square: false,
                             preview: last?.text || 'Начать чат'
                         });
                     }
                 }
 
-                if (!items.length) {
-                    container.innerHTML = '<div class="empty">Нет чатов. Добавьте друзей или вступите в клуб.</div>';
-                    return;
-                }
+                if (!items.length) { container.innerHTML = '<div class="empty">Нет чатов. Добавьте друзей или вступите в клуб.</div>'; return; }
 
                 container.innerHTML = items.map(it => {
                     const av = it.avatar ? `<img src="${it.avatar}" alt="">` : (it.name[0] || '?').toUpperCase();
@@ -1507,17 +1515,13 @@
                             </div>
                         </div>`;
                 }).join('');
-            } catch (e) {
-                console.error(e);
-                container.innerHTML = '<div class="empty" style="color:var(--red);">Ошибка</div>';
-            }
+            } catch (e) { console.error(e); container.innerHTML = '<div class="empty" style="color:var(--red);">Ошибка</div>'; }
         }
 
         async function openChat(type, id) {
             try {
                 if (type === 'club') {
-                    const { data: club } = await sb.from('clubs')
-                        .select('id, name, tag, logo_url').eq('id', id).single();
+                    const { data: club } = await sb.from('clubs').select('id, name, tag, logo_url').eq('id', id).single();
                     currentChat = { type: 'club', id: club.id, name: club.name + ' [' + club.tag + ']', avatar: club.logo_url };
                 } else {
                     const { data: u } = await sb.from('users')
@@ -1532,13 +1536,9 @@
 
                 document.getElementById('chatView').classList.add('active');
                 document.getElementById('chatMessages').innerHTML = '';
-
                 await loadMessages();
                 subscribeChatRealtime();
-            } catch (e) {
-                console.error(e);
-                showToast('Ошибка чата');
-            }
+            } catch (e) { console.error(e); showToast('Ошибка чата'); }
         }
 
         function closeChatView() {
@@ -1555,13 +1555,10 @@
 
             let query;
             if (currentChat.type === 'club') {
-                query = sb.from('messages')
-                    .select('id, sender_id, text, image_url, created_at')
-                    .eq('club_id', currentChat.id)
-                    .order('created_at', { ascending: true }).limit(200);
+                query = sb.from('messages').select('id, sender_id, text, image_url, created_at')
+                    .eq('club_id', currentChat.id).order('created_at', { ascending: true }).limit(200);
             } else {
-                query = sb.from('messages')
-                    .select('id, sender_id, text, image_url, created_at')
+                query = sb.from('messages').select('id, sender_id, text, image_url, created_at')
                     .or(`and(sender_id.eq.${me},recipient_id.eq.${currentChat.id}),and(sender_id.eq.${currentChat.id},recipient_id.eq.${me})`)
                     .order('created_at', { ascending: true }).limit(200);
             }
@@ -1569,7 +1566,6 @@
             const { data, error } = await query;
             if (error) { console.error(error); return; }
 
-            // Подтягиваем профили отправителей
             const senderIds = [...new Set((data || []).map(m => m.sender_id))];
             const { data: users } = await sb.from('users')
                 .select('telegram_id, display_name, custom_avatar, photo_url')
@@ -1585,14 +1581,8 @@
             const cls = isMe ? 'me' : 'them';
             const time = new Date(msg.created_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
             const author = (!isMe && currentChat.type === 'club')
-                ? `<div class="chat-bubble-author">${escapeHtml(user?.display_name || 'Игрок')}</div>`
-                : '';
-            return `
-                <div class="chat-bubble ${cls}">
-                    ${author}
-                    <div>${escapeHtml(msg.text || '')}</div>
-                    <div class="chat-bubble-time">${time}</div>
-                </div>`;
+                ? `<div class="chat-bubble-author">${escapeHtml(user?.display_name || 'Игрок')}</div>` : '';
+            return `<div class="chat-bubble ${cls}">${author}<div>${escapeHtml(msg.text || '')}</div><div class="chat-bubble-time">${time}</div></div>`;
         }
 
         async function sendMessage() {
@@ -1600,22 +1590,16 @@
             const input = document.getElementById('chatInput');
             const text = input.value.trim();
             if (!text) return;
-
             input.value = '';
             try {
                 const payload = {
-                    sender_id: currentUser.telegram_id,
-                    text,
+                    sender_id: currentUser.telegram_id, text,
                     club_id: currentChat.type === 'club' ? currentChat.id : null,
                     recipient_id: currentChat.type === 'dm' ? currentChat.id : null
                 };
                 const { error } = await sb.from('messages').insert(payload);
                 if (error) throw error;
-                // Realtime должен подхватить и отобразить
-            } catch (e) {
-                console.error(e);
-                showToast('Ошибка отправки');
-            }
+            } catch (e) { console.error(e); showToast('Ошибка отправки'); }
         }
 
         document.getElementById('chatInput')?.addEventListener('keydown', (e) => {
@@ -1625,34 +1609,23 @@
         function subscribeChatRealtime() {
             if (!currentChat) return;
             if (chatChannel) sb.removeChannel(chatChannel);
-
             const me = currentUser.telegram_id;
-            const filter = currentChat.type === 'club'
-                ? `club_id=eq.${currentChat.id}`
-                : `recipient_id=eq.${me}`; // грубо, но работает: фильтр по recipient
-
             chatChannel = sb.channel('chat_' + currentChat.type + '_' + currentChat.id)
-                .on('postgres_changes', {
-                    event: 'INSERT', schema: 'public', table: 'messages'
-                }, (payload) => {
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
                     const m = payload.new;
-                    // Фильтрация на клиенте
-                    if (currentChat.type === 'club') {
-                        if (m.club_id !== currentChat.id) return;
-                    } else {
+                    if (currentChat.type === 'club') { if (m.club_id !== currentChat.id) return; }
+                    else {
                         const isForMe = m.recipient_id === me && m.sender_id === currentChat.id;
                         const isFromMe = m.sender_id === me && m.recipient_id === currentChat.id;
                         if (!isForMe && !isFromMe) return;
                     }
                     appendMessage(m);
-                })
-                .subscribe();
+                }).subscribe();
         }
 
         async function appendMessage(m) {
             const container = document.getElementById('chatMessages');
             if (!container) return;
-            // Подтянем автора
             let user = null;
             if (m.sender_id !== currentUser.telegram_id) {
                 const { data } = await sb.from('users')
@@ -1667,16 +1640,11 @@
         // ============================================================
         // HELPERS
         // ============================================================
-        function haptic(style = 'light') {
-            try { tg?.HapticFeedback?.impactOccurred(style); } catch (e) {}
-        }
-
+        function haptic(style = 'light') { try { tg?.HapticFeedback?.impactOccurred(style); } catch (e) {} }
         function escapeHtml(str) {
             return String(str ?? '')
-                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;');
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
-
         let toastTimer;
         function showToast(msg) {
             const toast = document.getElementById('toast');
