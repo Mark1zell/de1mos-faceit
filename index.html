@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>De1mos Faceit</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --bg: #050807;
@@ -279,6 +280,19 @@
             color: var(--hint); font-size: 13px; font-weight: 700;
             margin-top: 6px; cursor: pointer;
         }
+        .friend-action {
+            padding: 8px 14px; border-radius: 12px; border: none;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            font-family: inherit; flex-shrink: 0;
+        }
+        .friend-action.add { background: var(--emerald); color: #04140e; }
+        .friend-action.pending { background: rgba(0,224,138,0.15); color: var(--emerald); }
+        .friend-action.accept { background: var(--emerald); color: #04140e; }
+        .friend-action.decline { background: rgba(255,84,112,0.15); color: var(--red); }
+        .empty {
+            text-align: center; padding: 24px 12px; color: var(--hint);
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
@@ -325,7 +339,7 @@
         </div>
 
         <div class="section-title">Лидерборд</div>
-        <div id="leaderboard"></div>
+        <div id="leaderboard"><div class="empty">Загрузка...</div></div>
     </div>
 
     <!-- ============ PROFILE ============ -->
@@ -358,14 +372,14 @@
         <div class="profile-header">
             <h3 style="margin-bottom: 14px;">🔍 Поиск друзей</h3>
             <div style="display: flex; gap: 8px;">
-                <input type="text" class="field-input" id="friendSearchInput" placeholder="Никнейм или Telegram ID" autocomplete="off">
+                <input type="text" class="field-input" id="friendSearchInput" placeholder="Никнейм или @username" autocomplete="off">
                 <button class="save-btn" style="width: auto; padding: 14px 18px; margin: 0;" onclick="searchFriends()">Найти</button>
             </div>
             <div id="friendSearchResults" style="margin-top: 14px;"></div>
         </div>
 
         <div class="profile-header">
-            <h3>👥 Мои друзья</h3>
+            <h3 style="margin-bottom: 14px;">👥 Мои друзья</h3>
             <div id="friendsList" style="margin-top: 14px;"></div>
         </div>
     </div>
@@ -410,60 +424,59 @@
         // ============================================================
         const SUPABASE_URL = 'https://mfvtdsgjejilajxxwbts.supabase.co';
         const SUPABASE_ANON_KEY = 'ВСТАВЬ_СЮДА_ТВОЙ_ANON_КЛЮЧ';
-        const API_URL = SUPABASE_URL + '/functions/v1/api';
         const STORAGE_BUCKET = 'avatars';
+
+        const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // ============================================================
         // TELEGRAM
         // ============================================================
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-
+        const tg = window.Telegram?.WebApp;
         let currentUser = null;
 
-        // ============================================================
-        // REST-ХЕЛПЕРЫ
-        // ============================================================
-        async function apiCall(endpoint, options = {}) {
-            const url = `${API_URL}/${endpoint}`;
-            const res = await fetch(url, options);
-            if (!res.ok) {
-                const err = await res.json().catch(() => ({}));
-                throw new Error(err.error || err.detail || `HTTP ${res.status}`);
-            }
-            return await res.json();
+        if (tg) {
+            tg.ready();
+            tg.expand();
         }
 
         // ============================================================
         // INIT
         // ============================================================
         async function init() {
+            if (!tg) {
+                showToast('Откройте приложение через Telegram');
+                return;
+            }
+
             const user = tg.initDataUnsafe?.user;
             if (!user) {
-                showToast('Откройте приложение через Telegram');
+                showToast('Не удалось получить данные Telegram');
                 return;
             }
 
             setHeaderAvatar(user.photo_url, user.first_name);
 
             try {
-                currentUser = await apiCall('auth', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
+                // Upsert — создаст или обновит запись
+                const { data, error } = await sb
+                    .from('users')
+                    .upsert({
                         telegram_id: user.id,
-                        username: user.username,
-                        first_name: user.first_name,
-                        last_name: user.last_name,
-                        photo_url: user.photo_url
-                    })
-                });
+                        username: user.username || null,
+                        display_name: user.first_name || user.username || 'Игрок',
+                        photo_url: user.photo_url || null
+                    }, { onConflict: 'telegram_id' })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                currentUser = data;
                 renderAll();
                 loadLeaderboard();
             } catch (e) {
                 console.error('Init error:', e);
-                showToast('Ошибка загрузки профиля');
+                showToast('Ошибка загрузки профиля: ' + e.message);
             }
         }
 
@@ -476,12 +489,17 @@
         }
 
         function renderDashboard(user) {
-            document.getElementById('eloValue').textContent = user.elo;
-            document.getElementById('eloLevel').textContent = `Уровень ${user.level}`;
-            document.getElementById('statMatches').textContent = user.matches_played;
-            document.getElementById('statWins').textContent = user.wins;
-            document.getElementById('statWinrate').textContent = user.winrate + '%';
-            const progress = ((user.elo % 250) / 250) * 100;
+            const winrate = user.matches_played > 0
+                ? Math.round((user.wins / user.matches_played) * 100)
+                : 0;
+
+            document.getElementById('eloValue').textContent = user.elo ?? 1000;
+            document.getElementById('eloLevel').textContent = `Уровень ${user.level ?? 1}`;
+            document.getElementById('statMatches').textContent = user.matches_played ?? 0;
+            document.getElementById('statWins').textContent = user.wins ?? 0;
+            document.getElementById('statWinrate').textContent = winrate + '%';
+
+            const progress = ((user.elo ?? 1000) % 250) / 250 * 100;
             setTimeout(() => {
                 document.getElementById('eloProgress').style.width = progress + '%';
             }, 200);
@@ -541,15 +559,19 @@
             btn.textContent = 'СОХРАНЕНИЕ...';
 
             try {
-                currentUser = await apiCall('profile-update', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        telegram_id: currentUser.telegram_id,
-                        standoff_id: standoffId,
+                const { data, error } = await sb
+                    .from('users')
+                    .update({
+                        standoff_id: standoffId || null,
                         display_name: nickname
                     })
-                });
+                    .eq('telegram_id', currentUser.telegram_id)
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                currentUser = data;
                 renderAll();
                 showToast('✅ Профиль сохранён');
                 haptic('medium');
@@ -577,7 +599,7 @@
 
         function pickFromTelegram() {
             closeAvatarSheet();
-            const user = tg.initDataUnsafe?.user;
+            const user = tg?.initDataUnsafe?.user;
             if (user?.photo_url) uploadAvatarFromUrl(user.photo_url);
             else showToast('У вас нет фото в Telegram');
         }
@@ -588,6 +610,7 @@
 
         document.getElementById('avatarFileInput').addEventListener('change', async (e) => {
             const file = e.target.files?.[0];
+            e.target.value = '';
             if (!file) return;
             if (file.size > 10_000_000) { showToast('Файл слишком большой (макс 10MB)'); return; }
             await uploadAvatarFile(file);
@@ -597,12 +620,26 @@
             if (!currentUser) return;
             showToast('Обработка...');
             try {
-                const compressedBlob = await compressImage(file, 512, 0.85);
-                const formData = new FormData();
-                formData.append('telegram_id', currentUser.telegram_id);
-                formData.append('file', compressedBlob, 'avatar.jpg');
+                const blob = await compressImage(file, 512, 0.85);
+                const path = `${currentUser.telegram_id}/${Date.now()}.jpg`;
 
-                currentUser = await apiCall('profile-avatar', { method: 'POST', body: formData });
+                const { error: upErr } = await sb.storage
+                    .from(STORAGE_BUCKET)
+                    .upload(path, blob, { contentType: 'image/jpeg', upsert: true });
+                if (upErr) throw upErr;
+
+                const { data: urlData } = sb.storage.from(STORAGE_BUCKET).getPublicUrl(path);
+                const publicUrl = urlData.publicUrl;
+
+                const { data, error } = await sb
+                    .from('users')
+                    .update({ custom_avatar: publicUrl })
+                    .eq('telegram_id', currentUser.telegram_id)
+                    .select()
+                    .single();
+                if (error) throw error;
+
+                currentUser = data;
                 renderProfileAvatar(currentUser);
                 showToast('✅ Аватар обновлён');
                 haptic('medium');
@@ -657,14 +694,21 @@
             closeAvatarSheet();
             if (!currentUser) return;
             try {
-                currentUser = await apiCall('profile-update', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ telegram_id: currentUser.telegram_id, custom_avatar: '' })
-                });
+                const { data, error } = await sb
+                    .from('users')
+                    .update({ custom_avatar: null })
+                    .eq('telegram_id', currentUser.telegram_id)
+                    .select()
+                    .single();
+                if (error) throw error;
+
+                currentUser = data;
                 renderProfileAvatar(currentUser);
                 showToast('Аватар удалён');
-            } catch (e) { console.error(e); showToast('Ошибка удаления'); }
+            } catch (e) {
+                console.error(e);
+                showToast('Ошибка удаления');
+            }
         }
 
         // ============================================================
@@ -681,18 +725,18 @@
             haptic('medium');
 
             try {
-                await apiCall('find-match', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ telegram_id: currentUser.telegram_id, mode: 'standoff2' })
-                });
-                tg.sendData(JSON.stringify({ action: 'find_match', mode: 'standoff2' }));
-                showToast('Поиск запущен! Уведомление придёт в бот.');
+                // Добавляем в очередь (если ещё не там)
+                await sb.from('queue').upsert({
+                    telegram_id: currentUser.telegram_id,
+                    joined_at: new Date().toISOString()
+                }, { onConflict: 'telegram_id' });
+
                 setTimeout(() => {
+                    showToast('Поиск запущен! Ожидайте соперника.');
                     btn.disabled = false;
                     btn.textContent = '🎮 ИГРАТЬ';
                     loading.classList.remove('active');
-                }, 3000);
+                }, 2500);
             } catch (e) {
                 console.error('Find match error:', e);
                 showToast('Ошибка поиска матча');
@@ -707,15 +751,24 @@
         // ============================================================
         async function loadLeaderboard() {
             try {
-                const data = await apiCall('leaderboard');
+                const { data, error } = await sb
+                    .from('users')
+                    .select('telegram_id, display_name, username, custom_avatar, photo_url, elo')
+                    .order('elo', { ascending: false })
+                    .limit(50);
+                if (error) throw error;
                 renderLeaderboard(data);
-            } catch (e) { console.error('Leaderboard error:', e); }
+            } catch (e) {
+                console.error('Leaderboard error:', e);
+                document.getElementById('leaderboard').innerHTML =
+                    '<div class="empty">Не удалось загрузить</div>';
+            }
         }
 
         function renderLeaderboard(data) {
             const container = document.getElementById('leaderboard');
             if (!Array.isArray(data) || data.length === 0) {
-                container.innerHTML = '<div style="text-align: center; padding: 12px; color: var(--hint);">Пока никого нет</div>';
+                container.innerHTML = '<div class="empty">Пока никого нет</div>';
                 return;
             }
             container.innerHTML = data.map((user, i) => {
@@ -726,7 +779,7 @@
                     <div class="leaderboard-item">
                         <span class="leaderboard-rank">#${i + 1}</span>
                         <div class="lb-avatar">${avatarHTML}</div>
-                        <span class="leaderboard-name">${user.display_name || 'Игрок'}</span>
+                        <span class="leaderboard-name">${escapeHtml(user.display_name || 'Игрок')}</span>
                         <span class="leaderboard-elo">${user.elo}</span>
                     </div>
                 `;
@@ -746,60 +799,93 @@
             if (query.length < 2) { showToast('Введите минимум 2 символа'); return; }
 
             const container = document.getElementById('friendSearchResults');
-            container.innerHTML = '<div style="text-align: center; padding: 12px; color: var(--hint);">Поиск...</div>';
+            container.innerHTML = '<div class="empty">Поиск...</div>';
 
             try {
-                const data = await apiCall('friends', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'search', query })
-                });
+                const safe = query.replace(/[%_]/g, '');
+                const { data, error } = await sb
+                    .from('users')
+                    .select('telegram_id, display_name, username, custom_avatar, photo_url, elo')
+                    .or(`display_name.ilike.%${safe}%,username.ilike.%${safe}%`)
+                    .neq('telegram_id', currentUser.telegram_id)
+                    .limit(20);
+                if (error) throw error;
 
-                const filtered = (data || []).filter(u => String(u.telegram_id) !== String(currentUser.telegram_id));
-
-                if (filtered.length === 0) {
-                    container.innerHTML = '<div style="text-align: center; padding: 12px; color: var(--hint);">Ничего не найдено</div>';
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="empty">Ничего не найдено</div>';
                     return;
                 }
 
-                container.innerHTML = filtered.map(u => {
+                // Получим список id, с которыми уже есть отношения
+                const ids = data.map(u => u.telegram_id);
+                const { data: rels } = await sb
+                    .from('friendships')
+                    .select('requester_id, addressee_id, status')
+                    .or(`requester_id.eq.${currentUser.telegram_id},addressee_id.eq.${currentUser.telegram_id}`)
+                    .in('requester_id', [currentUser.telegram_id, ...ids])
+                    .in('addressee_id', [currentUser.telegram_id, ...ids]);
+
+                const relMap = {};
+                (rels || []).forEach(r => {
+                    const other = r.requester_id === currentUser.telegram_id
+                        ? r.addressee_id
+                        : r.requester_id;
+                    relMap[other] = r.status;
+                });
+
+                container.innerHTML = data.map(u => {
                     const avatarSrc = u.custom_avatar || u.photo_url;
                     const initial = (u.display_name || 'U')[0].toUpperCase();
                     const avatarHTML = avatarSrc ? `<img src="${avatarSrc}" alt="">` : initial;
+                    const rel = relMap[u.telegram_id];
+
+                    let actionHtml;
+                    if (rel === 'accepted') {
+                        actionHtml = `<button class="friend-action pending" disabled>✓ Друг</button>`;
+                    } else if (rel === 'pending') {
+                        actionHtml = `<button class="friend-action pending" disabled>⏳ Запрос</button>`;
+                    } else {
+                        actionHtml = `<button class="friend-action add" onclick="sendFriendRequest(${u.telegram_id}, this)">+ Добавить</button>`;
+                    }
+
                     return `
-                        <div class="leaderboard-item" style="margin-bottom: 8px;">
+                        <div class="leaderboard-item">
                             <div class="lb-avatar">${avatarHTML}</div>
                             <div style="flex: 1; min-width: 0;">
-                                <div class="leaderboard-name">${u.display_name || 'Игрок'}</div>
-                                <div style="font-size: 11px; color: var(--hint);">ID: ${u.telegram_id} · ELO ${u.elo}</div>
+                                <div class="leaderboard-name">${escapeHtml(u.display_name || 'Игрок')}</div>
+                                <div style="font-size: 11px; color: var(--hint);">
+                                    ${u.username ? '@' + u.username + ' · ' : ''}ELO ${u.elo}
+                                </div>
                             </div>
-                            <button class="save-btn" style="width: auto; padding: 8px 14px; margin: 0; font-size: 12px;"
-                                onclick="sendFriendRequest(${u.telegram_id})">+ Добавить</button>
+                            ${actionHtml}
                         </div>
                     `;
                 }).join('');
             } catch (e) {
                 console.error('Search error:', e);
-                container.innerHTML = '<div style="text-align: center; padding: 12px; color: var(--red);">Ошибка поиска</div>';
+                container.innerHTML = '<div class="empty" style="color: var(--red);">Ошибка поиска</div>';
             }
         }
 
-        async function sendFriendRequest(addresseeId) {
+        async function sendFriendRequest(addresseeId, btnEl) {
             if (!currentUser) return;
+            if (btnEl) { btnEl.disabled = true; btnEl.textContent = '...'; }
             try {
-                await apiCall('friends', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'send_request',
-                        requester_id: currentUser.telegram_id,
-                        addressee_id: addresseeId
-                    })
+                const { error } = await sb.from('friendships').insert({
+                    requester_id: currentUser.telegram_id,
+                    addressee_id: addresseeId,
+                    status: 'pending'
                 });
+                if (error) throw error;
                 showToast('✅ Запрос отправлен');
+                if (btnEl) {
+                    btnEl.className = 'friend-action pending';
+                    btnEl.textContent = '⏳ Запрос';
+                }
             } catch (e) {
                 console.error('Friend request error:', e);
                 showToast(e.message || 'Ошибка отправки');
+                if (btnEl) { btnEl.disabled = false; btnEl.textContent = '+ Добавить'; }
             }
         }
 
@@ -808,34 +894,151 @@
             const container = document.getElementById('friendsList');
             if (!container) return;
 
-            try {
-                const data = await apiCall('friends', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'list', telegram_id: currentUser.telegram_id })
-                });
+            container.innerHTML = '<div class="empty">Загрузка...</div>';
 
-                if (!Array.isArray(data) || data.length === 0) {
-                    container.innerHTML = '<div style="text-align: center; padding: 12px; color: var(--hint);">Пока нет друзей</div>';
+            try {
+                const me = currentUser.telegram_id;
+
+                // Забираем все связи где я участник
+                const { data: rels, error } = await sb
+                    .from('friendships')
+                    .select('id, requester_id, addressee_id, status, created_at')
+                    .or(`requester_id.eq.${me},addressee_id.eq.${me}`);
+                if (error) throw error;
+
+                if (!rels || rels.length === 0) {
+                    container.innerHTML = '<div class="empty">Пока нет друзей и запросов</div>';
                     return;
                 }
 
-                container.innerHTML = data.map(f => `
-                    <div class="leaderboard-item" style="margin-bottom: 8px;">
-                        <div style="flex: 1;">
-                            <div class="leaderboard-name">ID: ${f.requester_id === currentUser.telegram_id ? f.addressee_id : f.requester_id}</div>
-                            <div style="font-size: 11px; color: var(--hint);">Статус: ${f.status}</div>
+                // Собираем id всех «вторых» участников
+                const otherIds = rels.map(r => r.requester_id === me ? r.addressee_id : r.requester_id);
+
+                // Подтягиваем профили одним запросом
+                const { data: users, error: uErr } = await sb
+                    .from('users')
+                    .select('telegram_id, display_name, username, custom_avatar, photo_url, elo')
+                    .in('telegram_id', otherIds);
+                if (uErr) throw uErr;
+
+                const userMap = {};
+                users.forEach(u => { userMap[u.telegram_id] = u; });
+
+                const accepted = [];
+                const incoming = [];
+                const outgoing = [];
+
+                rels.forEach(r => {
+                    const otherId = r.requester_id === me ? r.addressee_id : r.requester_id;
+                    const u = userMap[otherId] || { telegram_id: otherId, display_name: 'Игрок', elo: 1000 };
+                    const item = { ...r, other: u };
+
+                    if (r.status === 'accepted') accepted.push(item);
+                    else if (r.status === 'pending' && r.requester_id !== me) incoming.push(item);
+                    else if (r.status === 'pending' && r.requester_id === me) outgoing.push(item);
+                });
+
+                let html = '';
+
+                if (incoming.length > 0) {
+                    html += '<div class="section-title" style="margin-top: 0;">Входящие запросы</div>';
+                    html += incoming.map(renderFriendItem).join('');
+                }
+
+                if (accepted.length > 0) {
+                    html += '<div class="section-title">Друзья (' + accepted.length + ')</div>';
+                    html += accepted.map(r => renderFriendItem(r, 'friend')).join('');
+                }
+
+                if (outgoing.length > 0) {
+                    html += '<div class="section-title">Исходящие</div>';
+                    html += outgoing.map(r => renderFriendItem(r, 'outgoing')).join('');
+                }
+
+                if (!html) html = '<div class="empty">Пока нет друзей и запросов</div>';
+                container.innerHTML = html;
+            } catch (e) {
+                console.error('Load friends error:', e);
+                container.innerHTML = '<div class="empty" style="color: var(--red);">Ошибка загрузки</div>';
+            }
+        }
+
+        function renderFriendItem(item, mode) {
+            const u = item.other;
+            const avatarSrc = u.custom_avatar || u.photo_url;
+            const initial = (u.display_name || 'U')[0].toUpperCase();
+            const avatarHTML = avatarSrc ? `<img src="${avatarSrc}" alt="">` : initial;
+
+            let actions = '';
+            if (mode === 'friend') {
+                actions = `<button class="friend-action decline" onclick="removeFriend(${item.id}, this)">✕</button>`;
+            } else if (mode === 'outgoing') {
+                actions = `<button class="friend-action decline" onclick="removeFriend(${item.id}, this)">Отменить</button>`;
+            } else {
+                // incoming
+                actions = `
+                    <button class="friend-action accept" onclick="acceptFriend(${item.id}, this)">✓</button>
+                    <button class="friend-action decline" onclick="removeFriend(${item.id}, this)">✕</button>
+                `;
+            }
+
+            return `
+                <div class="leaderboard-item">
+                    <div class="lb-avatar">${avatarHTML}</div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div class="leaderboard-name">${escapeHtml(u.display_name || 'Игрок')}</div>
+                        <div style="font-size: 11px; color: var(--hint);">
+                            ${u.username ? '@' + u.username + ' · ' : ''}ELO ${u.elo}
                         </div>
                     </div>
-                `).join('');
-            } catch (e) { console.error('Load friends error:', e); }
+                    <div style="display: flex; gap: 6px;">${actions}</div>
+                </div>
+            `;
+        }
+
+        async function acceptFriend(friendshipId, btnEl) {
+            try {
+                const { error } = await sb
+                    .from('friendships')
+                    .update({ status: 'accepted' })
+                    .eq('id', friendshipId);
+                if (error) throw error;
+                showToast('✅ Теперь вы друзья');
+                loadFriends();
+            } catch (e) {
+                console.error(e);
+                showToast('Ошибка');
+            }
+        }
+
+        async function removeFriend(friendshipId, btnEl) {
+            try {
+                const { error } = await sb
+                    .from('friendships')
+                    .delete()
+                    .eq('id', friendshipId);
+                if (error) throw error;
+                showToast('Удалено');
+                loadFriends();
+            } catch (e) {
+                console.error(e);
+                showToast('Ошибка');
+            }
         }
 
         // ============================================================
         // HELPERS
         // ============================================================
         function haptic(style = 'light') {
-            try { tg.HapticFeedback.impactOccurred(style); } catch (e) {}
+            try { tg?.HapticFeedback?.impactOccurred(style); } catch (e) {}
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
         }
 
         let toastTimer;
