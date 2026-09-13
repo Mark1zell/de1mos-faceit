@@ -423,7 +423,7 @@
         // НАСТРОЙКИ SUPABASE
         // ============================================================
         const SUPABASE_URL = 'https://mfvtdsgjejilajxxwbts.supabase.co';
-        const SUPABASE_ANON_KEY = 'ВСТАВЬ_СЮДА_ТВОЙ_ANON_КЛЮЧ';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1mdnRkc2dqZWppbGFqeHh3YnRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxNjQwMzAsImV4cCI6MjEwNDc0MDAzMH0.RdmxBLwFOMhNzZceU21yyorm7Xh_zOJmwv0QogD5iwo';
         const STORAGE_BUCKET = 'avatars';
 
         const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -443,12 +443,31 @@
         // INIT
         // ============================================================
         async function init() {
-            if (!tg) {
+            console.log('🚀 init() start');
+            console.log('tg:', tg);
+            console.log('initDataUnsafe:', tg?.initDataUnsafe);
+
+            if (!tg && !location.search.includes('dev=1')) {
                 showToast('Откройте приложение через Telegram');
                 return;
             }
 
-            const user = tg.initDataUnsafe?.user;
+            let user = tg?.initDataUnsafe?.user;
+
+            // === DEV MODE ===
+            if (!user && (location.hostname === 'localhost' || location.search.includes('dev=1'))) {
+                user = {
+                    id: 999999999,
+                    first_name: 'DevUser',
+                    username: 'devuser',
+                    photo_url: null
+                };
+                console.warn('⚠️ DEV MODE: фейковый юзер', user);
+            }
+            // ================
+
+            console.log('tg user:', user);
+
             if (!user) {
                 showToast('Не удалось получить данные Telegram');
                 return;
@@ -457,26 +476,35 @@
             setHeaderAvatar(user.photo_url, user.first_name);
 
             try {
-                // Upsert — создаст или обновит запись
+                const payload = {
+                    telegram_id: user.id,
+                    username: user.username || null,
+                    display_name: user.first_name || user.username || 'Игрок',
+                    photo_url: user.photo_url || null
+                };
+                console.log('📡 upsert →', payload);
+
                 const { data, error } = await sb
                     .from('users')
-                    .upsert({
-                        telegram_id: user.id,
-                        username: user.username || null,
-                        display_name: user.first_name || user.username || 'Игрок',
-                        photo_url: user.photo_url || null
-                    }, { onConflict: 'telegram_id' })
+                    .upsert(payload, { onConflict: 'telegram_id' })
                     .select()
                     .single();
+
+                console.log('📥 upsert result:', { data, error });
 
                 if (error) throw error;
 
                 currentUser = data;
                 renderAll();
                 loadLeaderboard();
+                console.log('✅ init() done, currentUser =', currentUser);
             } catch (e) {
-                console.error('Init error:', e);
-                showToast('Ошибка загрузки профиля: ' + e.message);
+                console.error('❌ Init error:', e);
+                console.error('   message:', e?.message);
+                console.error('   details:', e?.details);
+                console.error('   hint:', e?.hint);
+                console.error('   code:', e?.code);
+                showToast('Ошибка загрузки: ' + (e?.message || e));
             }
         }
 
@@ -559,6 +587,8 @@
             btn.textContent = 'СОХРАНЕНИЕ...';
 
             try {
+                console.log('💾 saveProfile →', { standoff_id: standoffId, display_name: nickname });
+
                 const { data, error } = await sb
                     .from('users')
                     .update({
@@ -569,6 +599,7 @@
                     .select()
                     .single();
 
+                console.log('💾 saveProfile result:', { data, error });
                 if (error) throw error;
 
                 currentUser = data;
@@ -576,8 +607,8 @@
                 showToast('✅ Профиль сохранён');
                 haptic('medium');
             } catch (e) {
-                console.error('Save error:', e);
-                showToast('Ошибка сохранения');
+                console.error('❌ Save error:', e);
+                showToast('Ошибка сохранения: ' + (e?.message || e));
             } finally {
                 btn.disabled = false;
                 btn.textContent = '💾 СОХРАНИТЬ';
@@ -617,19 +648,33 @@
         });
 
         async function uploadAvatarFile(file) {
-            if (!currentUser) return;
+            console.log('📸 uploadAvatarFile:', file.name, file.size, file.type);
+            console.log('   currentUser:', currentUser);
+
+            if (!currentUser) {
+                console.warn('❌ currentUser null → прерываю');
+                showToast('Профиль ещё не загружен');
+                return;
+            }
+
             showToast('Обработка...');
             try {
                 const blob = await compressImage(file, 512, 0.85);
+                console.log('   сжато:', blob.size, 'байт');
+
                 const path = `${currentUser.telegram_id}/${Date.now()}.jpg`;
+                console.log('   upload →', path);
 
                 const { error: upErr } = await sb.storage
                     .from(STORAGE_BUCKET)
                     .upload(path, blob, { contentType: 'image/jpeg', upsert: true });
+
+                console.log('   upload err:', upErr);
                 if (upErr) throw upErr;
 
                 const { data: urlData } = sb.storage.from(STORAGE_BUCKET).getPublicUrl(path);
                 const publicUrl = urlData.publicUrl;
+                console.log('   publicUrl:', publicUrl);
 
                 const { data, error } = await sb
                     .from('users')
@@ -637,6 +682,8 @@
                     .eq('telegram_id', currentUser.telegram_id)
                     .select()
                     .single();
+
+                console.log('   update result:', { data, error });
                 if (error) throw error;
 
                 currentUser = data;
@@ -644,7 +691,11 @@
                 showToast('✅ Аватар обновлён');
                 haptic('medium');
             } catch (e) {
-                console.error('Avatar error:', e);
+                console.error('❌ Avatar error:', e);
+                console.error('   message:', e?.message);
+                console.error('   details:', e?.details);
+                console.error('   hint:', e?.hint);
+                console.error('   code:', e?.code);
                 showToast(e.message || 'Ошибка загрузки');
             }
         }
@@ -658,7 +709,7 @@
                 const file = new File([blob], 'avatar.jpg', { type: blob.type || 'image/jpeg' });
                 await uploadAvatarFile(file);
             } catch (e) {
-                console.error('Telegram avatar error:', e);
+                console.error('❌ Telegram avatar error:', e);
                 showToast('Ошибка загрузки фото');
             }
         }
@@ -725,11 +776,14 @@
             haptic('medium');
 
             try {
-                // Добавляем в очередь (если ещё не там)
-                await sb.from('queue').upsert({
+                console.log('🎮 findMatch → queue upsert');
+                const { error } = await sb.from('queue').upsert({
                     telegram_id: currentUser.telegram_id,
                     joined_at: new Date().toISOString()
                 }, { onConflict: 'telegram_id' });
+
+                console.log('🎮 queue result:', { error });
+                if (error) throw error;
 
                 setTimeout(() => {
                     showToast('Поиск запущен! Ожидайте соперника.');
@@ -738,8 +792,8 @@
                     loading.classList.remove('active');
                 }, 2500);
             } catch (e) {
-                console.error('Find match error:', e);
-                showToast('Ошибка поиска матча');
+                console.error('❌ Find match error:', e);
+                showToast('Ошибка поиска матча: ' + (e?.message || e));
                 btn.disabled = false;
                 btn.textContent = '🎮 ИГРАТЬ';
                 loading.classList.remove('active');
@@ -816,14 +870,10 @@
                     return;
                 }
 
-                // Получим список id, с которыми уже есть отношения
-                const ids = data.map(u => u.telegram_id);
                 const { data: rels } = await sb
                     .from('friendships')
                     .select('requester_id, addressee_id, status')
-                    .or(`requester_id.eq.${currentUser.telegram_id},addressee_id.eq.${currentUser.telegram_id}`)
-                    .in('requester_id', [currentUser.telegram_id, ...ids])
-                    .in('addressee_id', [currentUser.telegram_id, ...ids]);
+                    .or(`requester_id.eq.${currentUser.telegram_id},addressee_id.eq.${currentUser.telegram_id}`);
 
                 const relMap = {};
                 (rels || []).forEach(r => {
@@ -899,7 +949,6 @@
             try {
                 const me = currentUser.telegram_id;
 
-                // Забираем все связи где я участник
                 const { data: rels, error } = await sb
                     .from('friendships')
                     .select('id, requester_id, addressee_id, status, created_at')
@@ -911,10 +960,8 @@
                     return;
                 }
 
-                // Собираем id всех «вторых» участников
                 const otherIds = rels.map(r => r.requester_id === me ? r.addressee_id : r.requester_id);
 
-                // Подтягиваем профили одним запросом
                 const { data: users, error: uErr } = await sb
                     .from('users')
                     .select('telegram_id, display_name, username, custom_avatar, photo_url, elo')
@@ -975,7 +1022,6 @@
             } else if (mode === 'outgoing') {
                 actions = `<button class="friend-action decline" onclick="removeFriend(${item.id}, this)">Отменить</button>`;
             } else {
-                // incoming
                 actions = `
                     <button class="friend-action accept" onclick="acceptFriend(${item.id}, this)">✓</button>
                     <button class="friend-action decline" onclick="removeFriend(${item.id}, this)">✕</button>
