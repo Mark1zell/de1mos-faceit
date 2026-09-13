@@ -19,9 +19,7 @@
             --red: #ff5470;
             --gold: #d9ab5a;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         html, body {
             background: var(--bg);
             color: var(--text);
@@ -30,40 +28,31 @@
             -webkit-tap-highlight-color: transparent;
             overflow-x: hidden;
         }
-
         body::before {
             content: '';
-            position: fixed;
-            inset: -50%;
+            position: fixed; inset: -50%;
             background:
                 radial-gradient(circle at 20% 20%, rgba(0,224,138,0.08), transparent 45%),
                 radial-gradient(circle at 80% 60%, rgba(0,184,116,0.06), transparent 50%),
                 radial-gradient(circle at 50% 100%, rgba(34,232,164,0.05), transparent 55%);
             animation: bgFloat 24s ease-in-out infinite alternate;
-            z-index: -2;
-            filter: blur(30px);
-            will-change: transform;
+            z-index: -2; filter: blur(30px); will-change: transform;
         }
         body::after {
             content: '';
-            position: fixed;
-            inset: 0;
+            position: fixed; inset: 0;
             background-image:
                 linear-gradient(rgba(0,224,138,0.025) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0,224,138,0.025) 1px, transparent 1px);
             background-size: 40px 40px;
             mask-image: radial-gradient(circle at 50% 30%, #000 15%, transparent 70%);
             -webkit-mask-image: radial-gradient(circle at 50% 30%, #000 15%, transparent 70%);
-            z-index: -1;
-            pointer-events: none;
+            z-index: -1; pointer-events: none;
         }
-
         @keyframes bgFloat {
-            0%   { transform: translate3d(0, 0, 0) scale(1); }
+            0% { transform: translate3d(0, 0, 0) scale(1); }
             100% { transform: translate3d(2%, -2%, 0) scale(1.06); }
         }
-
-        /* Header */
         .header {
             position: sticky; top: 0; z-index: 100;
             display: flex; align-items: center; justify-content: space-between;
@@ -86,7 +75,7 @@
         .avatar img { width: 100%; height: 100%; object-fit: cover; }
         @keyframes pulseGlow {
             0%, 100% { box-shadow: 0 0 0 1.5px rgba(0,224,138,0.18), 0 0 12px rgba(0,224,138,0.18); }
-            50%      { box-shadow: 0 0 0 1.5px rgba(0,224,138,0.28), 0 0 18px rgba(0,224,138,0.28); }
+            50% { box-shadow: 0 0 0 1.5px rgba(0,224,138,0.28), 0 0 18px rgba(0,224,138,0.28); }
         }
         .header-title {
             font-size: 17px; font-weight: 800; letter-spacing: 0.6px;
@@ -97,10 +86,7 @@
             animation: shine 6s linear infinite;
         }
         .header-title span { -webkit-text-fill-color: var(--emerald); }
-        @keyframes shine {
-            0%   { background-position: 0% center; }
-            100% { background-position: -200% center; }
-        }
+        @keyframes shine { 0% { background-position: 0% center; } 100% { background-position: -200% center; } }
         .notif-btn {
             width: 42px; height: 42px; border-radius: 50%;
             background: rgba(0,224,138,0.06); border: 1px solid var(--border);
@@ -109,26 +95,20 @@
             transition: transform 0.25s, background 0.25s;
         }
         .notif-btn:active { transform: scale(0.9); background: rgba(0,224,138,0.14); }
-
-        /* Container / Pages */
         .container { padding: 18px 16px 100px; }
         .page { display: none; animation: fadeUp 0.4s cubic-bezier(0.2, 0.7, 0.2, 1); }
         .page.active { display: block; }
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(12px); }
-            to   { opacity: 1; transform: translateY(0); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        /* Dashboard ELO card */
         .elo-card {
             position: relative;
             background: linear-gradient(140deg, rgba(0,224,138,0.07), rgba(0,184,116,0.02) 45%, rgba(5,10,8,0.6));
             border: 1px solid var(--border-strong);
-            border-radius: 22px;
-            padding: 22px; margin-bottom: 14px;
+            border-radius: 22px; padding: 22px; margin-bottom: 14px;
             overflow: hidden;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             box-shadow: 0 10px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(0,224,138,0.08);
         }
         .elo-card::before {
@@ -141,13 +121,10 @@
             pointer-events: none;
         }
         @keyframes orbFloat {
-            0%   { transform: translate(0, 0) scale(1); opacity: 0.85; }
+            0% { transform: translate(0, 0) scale(1); opacity: 0.85; }
             100% { transform: translate(-20px, 20px) scale(1.12); opacity: 1; }
         }
-        .elo-label {
-            font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
-            color: var(--emerald); opacity: 0.65; margin-bottom: 6px; font-weight: 600;
-        }
+        .elo-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--emerald); opacity: 0.65; margin-bottom: 6px; font-weight: 600; }
         .elo-value {
             font-size: 54px; font-weight: 900; line-height: 1;
             background: linear-gradient(180deg, #ffffff, var(--emerald-3));
@@ -155,24 +132,9 @@
             -webkit-text-fill-color: transparent;
             animation: eloPop 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-        @keyframes eloPop {
-            from { opacity: 0; transform: scale(0.9); }
-            to   { opacity: 1; transform: scale(1); }
-        }
-        .elo-level {
-            display: inline-block;
-            background: rgba(0,224,138,0.08);
-            border: 1px solid var(--border-strong);
-            color: var(--emerald);
-            padding: 5px 14px; border-radius: 20px;
-            font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
-            margin-top: 10px;
-        }
-        .elo-progress {
-            margin-top: 18px; height: 6px;
-            background: rgba(0,224,138,0.06);
-            border-radius: 3px; overflow: hidden;
-        }
+        @keyframes eloPop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .elo-level { display: inline-block; background: rgba(0,224,138,0.08); border: 1px solid var(--border-strong); color: var(--emerald); padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; margin-top: 10px; }
+        .elo-progress { margin-top: 18px; height: 6px; background: rgba(0,224,138,0.06); border-radius: 3px; overflow: hidden; }
         .elo-progress-bar {
             height: 100%; width: 0%;
             background: linear-gradient(90deg, var(--emerald-2), var(--emerald), var(--emerald-3));
@@ -182,45 +144,27 @@
             position: relative;
         }
         .elo-progress-bar::after {
-            content: '';
-            position: absolute; inset: 0;
+            content: ''; position: absolute; inset: 0;
             background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.35) 50%, transparent 100%);
             background-size: 80px 100%;
             animation: barShine 4s ease-in-out infinite;
         }
         @keyframes barShine {
-            0%   { background-position: -80px 0; opacity: 0; }
-            20%  { opacity: 1; }
-            80%  { opacity: 1; }
+            0% { background-position: -80px 0; opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
             100% { background-position: calc(100% + 80px) 0; opacity: 0; }
         }
-
-        /* Stats */
-        .stats-row {
-            display: grid; grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px; margin-bottom: 14px;
-        }
+        .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px; }
         .stat-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 14px 8px; text-align: center;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 14px 8px; text-align: center;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
         }
-        .stat-card:active {
-            transform: translateY(-2px) scale(0.98);
-            border-color: var(--border-strong);
-            box-shadow: 0 6px 18px rgba(0,224,138,0.10);
-        }
+        .stat-card:active { transform: translateY(-2px) scale(0.98); border-color: var(--border-strong); box-shadow: 0 6px 18px rgba(0,224,138,0.10); }
         .stat-value { font-size: 22px; font-weight: 800; color: var(--emerald); }
-        .stat-label {
-            font-size: 10px; color: var(--hint); margin-top: 3px;
-            text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
-        }
-
-        /* Play Button */
+        .stat-label { font-size: 10px; color: var(--hint); margin-top: 3px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
         .play-btn {
             position: relative; width: 100%; padding: 18px;
             border: none; border-radius: 18px;
@@ -236,61 +180,28 @@
         .play-btn:active { transform: scale(0.97); box-shadow: 0 4px 14px rgba(0,224,138,0.35); }
         .play-btn:disabled { opacity: 0.55; animation: none; box-shadow: none; }
         @keyframes btnBreath {
-            0%, 100% {
-                background-position: 0% 50%;
-                box-shadow: 0 6px 22px rgba(0,224,138,0.22), inset 0 1px 0 rgba(255,255,255,0.3);
-            }
-            50% {
-                background-position: 100% 50%;
-                box-shadow: 0 8px 28px rgba(0,224,138,0.32), inset 0 1px 0 rgba(255,255,255,0.3);
-            }
+            0%, 100% { background-position: 0% 50%; box-shadow: 0 6px 22px rgba(0,224,138,0.22), inset 0 1px 0 rgba(255,255,255,0.3); }
+            50% { background-position: 100% 50%; box-shadow: 0 8px 28px rgba(0,224,138,0.32), inset 0 1px 0 rgba(255,255,255,0.3); }
         }
-
-        /* Section title */
-        .section-title {
-            font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
-            color: var(--hint); margin: 4px 0 12px; font-weight: 700;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .section-title::after {
-            content: ''; flex: 1; height: 1px;
-            background: linear-gradient(90deg, var(--border-strong), transparent);
-        }
-
-        /* Menu */
-        .menu-grid {
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 10px; margin-bottom: 20px;
-        }
+        .section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--hint); margin: 4px 0 12px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .section-title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border-strong), transparent); }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .menu-item {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 15px;
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 15px;
             display: flex; align-items: center; gap: 10px;
-            cursor: pointer; color: var(--text);
-            font-size: 13px; font-weight: 700;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            cursor: pointer; color: var(--text); font-size: 13px; font-weight: 700;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             transition: transform 0.2s, border-color 0.25s, background 0.25s;
         }
-        .menu-item:active {
-            transform: scale(0.97);
-            border-color: var(--border-strong);
-            background: rgba(0,224,138,0.04);
-        }
+        .menu-item:active { transform: scale(0.97); border-color: var(--border-strong); background: rgba(0,224,138,0.04); }
         .menu-icon { font-size: 18px; filter: drop-shadow(0 0 4px rgba(0,224,138,0.35)); }
-
-        /* Leaderboard */
         .leaderboard-item {
             display: flex; align-items: center; gap: 12px;
             padding: 12px 14px;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            margin-bottom: 8px;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 14px; margin-bottom: 8px;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             animation: fadeUp 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
             transition: border-color 0.25s;
         }
@@ -307,31 +218,19 @@
             overflow: hidden; flex-shrink: 0;
         }
         .lb-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .leaderboard-rank {
-            font-size: 14px; font-weight: 900;
-            color: var(--emerald); width: 26px; text-align: center;
-        }
+        .leaderboard-rank { font-size: 14px; font-weight: 900; color: var(--emerald); width: 26px; text-align: center; }
         .leaderboard-item:nth-child(1) .leaderboard-rank { color: var(--gold); }
         .leaderboard-item:nth-child(2) .leaderboard-rank { color: #b8c2c7; }
         .leaderboard-item:nth-child(3) .leaderboard-rank { color: #b8814f; }
-        .leaderboard-name {
-            flex: 1; font-size: 14px; font-weight: 600; color: var(--text);
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
+        .leaderboard-name { flex: 1; font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .leaderboard-elo { font-size: 14px; font-weight: 800; color: var(--emerald); }
-
-        /* Profile */
         .profile-header {
             position: relative;
             background: linear-gradient(140deg, rgba(0,224,138,0.08), rgba(0,184,116,0.02) 45%, rgba(5,10,8,0.6));
             border: 1px solid var(--border-strong);
-            border-radius: 22px;
-            padding: 24px 20px;
-            margin-bottom: 14px;
-            text-align: center;
+            border-radius: 22px; padding: 24px 20px; margin-bottom: 14px; text-align: center;
             overflow: hidden;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             box-shadow: 0 10px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(0,224,138,0.08);
         }
         .profile-header::before {
@@ -343,11 +242,7 @@
             animation: orbFloat 14s ease-in-out infinite alternate;
             pointer-events: none;
         }
-        .profile-avatar-wrap {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 14px;
-        }
+        .profile-avatar-wrap { position: relative; display: inline-block; margin-bottom: 14px; }
         .profile-avatar {
             width: 96px; height: 96px; border-radius: 50%;
             background: linear-gradient(135deg, var(--emerald), var(--emerald-2));
@@ -359,82 +254,42 @@
         }
         .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .avatar-edit-btn {
-            position: absolute;
-            bottom: 0; right: 0;
-            width: 34px; height: 34px;
-            border-radius: 50%;
-            background: var(--emerald);
-            color: #04140e;
-            border: 2px solid var(--bg);
-            font-size: 15px;
-            font-weight: 900;
+            position: absolute; bottom: 0; right: 0;
+            width: 34px; height: 34px; border-radius: 50%;
+            background: var(--emerald); color: #04140e;
+            border: 2px solid var(--bg); font-size: 15px; font-weight: 900;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer;
             box-shadow: 0 4px 14px rgba(0,224,138,0.35);
             transition: transform 0.2s;
         }
         .avatar-edit-btn:active { transform: scale(0.9); }
-
-        .profile-name {
-            font-size: 20px; font-weight: 800;
-            margin-bottom: 4px;
-            letter-spacing: 0.3px;
-        }
-        .profile-username {
-            font-size: 13px; color: var(--hint);
-            margin-bottom: 14px;
-        }
+        .profile-name { font-size: 20px; font-weight: 800; margin-bottom: 4px; letter-spacing: 0.3px; }
+        .profile-username { font-size: 13px; color: var(--hint); margin-bottom: 14px; }
         .profile-username span { color: var(--emerald); }
-
-        .profile-fields {
-            display: flex; flex-direction: column;
-            gap: 12px; margin-top: 14px; text-align: left;
-        }
-        .field-label {
-            font-size: 11px; text-transform: uppercase;
-            letter-spacing: 1.5px; color: var(--hint);
-            font-weight: 700; margin-bottom: 6px;
-            display: block;
-        }
+        .profile-fields { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; text-align: left; }
+        .field-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--hint); font-weight: 700; margin-bottom: 6px; display: block; }
         .field-input {
-            width: 100%;
-            background: rgba(0,224,138,0.04);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 14px 16px;
-            font-size: 15px;
-            color: var(--text);
-            font-family: inherit;
-            font-weight: 600;
+            width: 100%; background: rgba(0,224,138,0.04);
+            border: 1px solid var(--border); border-radius: 14px;
+            padding: 14px 16px; font-size: 15px; color: var(--text);
+            font-family: inherit; font-weight: 600;
             transition: border-color 0.25s, background 0.25s;
             outline: none;
         }
         .field-input::placeholder { color: var(--hint); font-weight: 500; }
-        .field-input:focus {
-            border-color: var(--border-strong);
-            background: rgba(0,224,138,0.07);
-        }
-
+        .field-input:focus { border-color: var(--border-strong); background: rgba(0,224,138,0.07); }
         .save-btn {
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 16px;
+            width: 100%; padding: 16px; border: none; border-radius: 16px;
             background: linear-gradient(135deg, #00e08a, #00b874 55%, #22e8a4);
             background-size: 200% 200%;
-            color: #04140e;
-            font-size: 15px;
-            font-weight: 900;
-            letter-spacing: 1.5px;
-            cursor: pointer;
-            margin-top: 16px;
+            color: #04140e; font-size: 15px; font-weight: 900;
+            letter-spacing: 1.5px; cursor: pointer; margin-top: 16px;
             box-shadow: 0 6px 22px rgba(0,224,138,0.22), inset 0 1px 0 rgba(255,255,255,0.3);
             transition: transform 0.15s, box-shadow 0.3s, background-position 0.6s;
         }
         .save-btn:active { transform: scale(0.97); }
         .save-btn:disabled { opacity: 0.55; cursor: not-allowed; }
-
-        /* Bottom Nav */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0;
             display: flex; justify-content: space-around;
@@ -456,8 +311,7 @@
         }
         .nav-item.active { color: var(--emerald); }
         .nav-item.active::before {
-            content: '';
-            position: absolute; top: -9px; left: 50%;
+            content: ''; position: absolute; top: -9px; left: 50%;
             transform: translateX(-50%);
             width: 22px; height: 3px; border-radius: 3px;
             background: var(--emerald);
@@ -466,17 +320,11 @@
         }
         @keyframes navPulse {
             0%, 100% { opacity: 1; width: 22px; }
-            50%      { opacity: 0.7; width: 28px; }
+            50% { opacity: 0.7; width: 28px; }
         }
         .nav-item:active { transform: scale(0.9); }
         .nav-icon { font-size: 19px; }
-
-        /* Loading / Spinner */
-        .loading {
-            display: none; text-align: center; padding: 18px;
-            color: var(--emerald); font-weight: 600;
-            font-size: 13px; letter-spacing: 0.6px;
-        }
+        .loading { display: none; text-align: center; padding: 18px; color: var(--emerald); font-weight: 600; font-size: 13px; letter-spacing: 0.6px; }
         .loading.active { display: block; }
         .spinner {
             width: 36px; height: 36px;
@@ -489,8 +337,6 @@
             box-shadow: 0 0 12px rgba(0,224,138,0.20);
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Toast */
         .toast {
             position: fixed; bottom: 100px; left: 50%;
             transform: translateX(-50%) translateY(24px);
@@ -503,22 +349,15 @@
             border: 1px solid var(--border-strong);
             box-shadow: 0 8px 32px rgba(0,0,0,0.55);
             z-index: 200; white-space: nowrap;
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
         }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-        /* Hidden file input */
         #avatarFileInput { display: none; }
-
-        /* Avatar picker bottom sheet */
         .sheet-overlay {
             position: fixed; inset: 0;
             background: rgba(0,0,0,0.6);
             backdrop-filter: blur(4px);
-            z-index: 300;
-            opacity: 0;
-            pointer-events: none;
+            z-index: 300; opacity: 0; pointer-events: none;
             transition: opacity 0.3s;
         }
         .sheet-overlay.active { opacity: 1; pointer-events: auto; }
@@ -534,11 +373,7 @@
             transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         .sheet.active { transform: translateY(0); }
-        .sheet-title {
-            font-size: 13px; font-weight: 800;
-            text-transform: uppercase; letter-spacing: 1.5px;
-            color: var(--emerald); margin-bottom: 14px; text-align: center;
-        }
+        .sheet-title { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--emerald); margin-bottom: 14px; text-align: center; }
         .sheet-option {
             width: 100%; padding: 15px;
             background: rgba(0,224,138,0.05);
@@ -549,10 +384,7 @@
             display: flex; align-items: center; gap: 12px;
             transition: background 0.2s, border-color 0.2s;
         }
-        .sheet-option:active {
-            background: rgba(0,224,138,0.10);
-            border-color: var(--border-strong);
-        }
+        .sheet-option:active { background: rgba(0,224,138,0.10); border-color: var(--border-strong); }
         .sheet-cancel {
             width: 100%; padding: 14px;
             background: transparent;
@@ -562,7 +394,6 @@
             margin-top: 6px; cursor: pointer;
             letter-spacing: 1px;
         }
-
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(0,224,138,0.20); border-radius: 3px; }
@@ -575,7 +406,6 @@
         <button class="notif-btn" onclick="showToast('Уведомлений пока нет')">🔔</button>
     </header>
 
-    <!-- Page: Dashboard -->
     <div class="container page active" id="page-dashboard">
         <div class="elo-card">
             <div class="elo-label">Ваш рейтинг</div>
@@ -628,7 +458,6 @@
         <div id="leaderboard"></div>
     </div>
 
-    <!-- Page: Profile -->
     <div class="container page" id="page-profile">
         <div class="profile-header">
             <div class="profile-avatar-wrap">
@@ -641,14 +470,9 @@
             <div class="profile-fields">
                 <div>
                     <label class="field-label">Standoff 2 ID</label>
-                    <input
-                        type="text"
-                        class="field-input"
-                        id="standoffIdInput"
+                    <input type="text" class="field-input" id="standoffIdInput"
                         placeholder="Введите ваш ID из Standoff 2"
-                        maxlength="64"
-                        autocomplete="off"
-                    >
+                        maxlength="64" autocomplete="off">
                 </div>
             </div>
 
@@ -656,27 +480,21 @@
         </div>
     </div>
 
-    <!-- Bottom Nav -->
     <nav class="bottom-nav">
         <button class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard')">
-            <span class="nav-icon">🏠</span>
-            <span>Главная</span>
+            <span class="nav-icon">🏠</span><span>Главная</span>
         </button>
         <button class="nav-item" data-page="profile" onclick="switchPage('profile')">
-            <span class="nav-icon">👤</span>
-            <span>Профиль</span>
+            <span class="nav-icon">👤</span><span>Профиль</span>
         </button>
         <button class="nav-item" onclick="showToast('Раздел в разработке')">
-            <span class="nav-icon">🏆</span>
-            <span>Клубы</span>
+            <span class="nav-icon">🏆</span><span>Клубы</span>
         </button>
         <button class="nav-item" onclick="showToast('Раздел в разработке')">
-            <span class="nav-icon">💬</span>
-            <span>Чат</span>
+            <span class="nav-icon">💬</span><span>Чат</span>
         </button>
     </nav>
 
-    <!-- Avatar sheet -->
     <div class="sheet-overlay" id="sheetOverlay" onclick="closeAvatarSheet()"></div>
     <div class="sheet" id="avatarSheet">
         <div class="sheet-title">Сменить аватар</div>
@@ -693,7 +511,6 @@
     </div>
 
     <input type="file" id="avatarFileInput" accept="image/*">
-
     <div class="toast" id="toast"></div>
 
     <script>
@@ -701,8 +518,8 @@
         tg.ready();
         tg.expand();
 
-        // ⚠️ ЗАМЕНИ НА СВОЙ URL БЭКЕНДА
-        const API_URL = 'https://de1mos-faceit-production.up.railway.app';
+        // ⚠️ ВАЖНО: Supabase Edge Functions
+        const API_URL = 'https://mfvtdsgjejilajxxwbts.supabase.co/functions/v1';
 
         let currentUser = null;
 
@@ -718,7 +535,7 @@
             setHeaderAvatar(user.photo_url, user.first_name);
 
             try {
-                const res = await fetch(`${API_URL}/api/auth`, {
+                const res = await fetch(`${API_URL}/auth`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -764,7 +581,6 @@
             ]);
         }
 
-        // ============ RENDER ============
         function renderAll() {
             renderDashboard(currentUser);
             renderProfile(currentUser);
@@ -809,7 +625,6 @@
             }
         }
 
-        // ============ NAVIGATION ============
         function switchPage(page) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById('page-' + page).classList.add('active');
@@ -819,7 +634,7 @@
             haptic();
         }
 
-        // ============ SAVE PROFILE ============
+        // ============ SAVE PROFILE (Standoff ID) ============
         async function saveProfile() {
             if (!currentUser) return;
             const btn = document.getElementById('saveBtn');
@@ -829,7 +644,7 @@
             btn.textContent = 'СОХРАНЕНИЕ...';
 
             try {
-                const res = await fetch(`${API_URL}/api/profile/update`, {
+                const res = await fetch(`${API_URL}/profile-update`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -851,149 +666,135 @@
             }
         }
 
-// ============ AVATAR ============
-function openAvatarSheet() {
-    document.getElementById('sheetOverlay').classList.add('active');
-    document.getElementById('avatarSheet').classList.add('active');
-    haptic();
-}
-function closeAvatarSheet() {
-    document.getElementById('sheetOverlay').classList.remove('active');
-    document.getElementById('avatarSheet').classList.remove('active');
-}
-
-function pickFromTelegram() {
-    closeAvatarSheet();
-    const user = tg.initDataUnsafe?.user;
-    if (user?.photo_url) {
-        uploadAvatarFromUrl(user.photo_url);
-    } else {
-        showToast('У вас нет фото в Telegram');
-    }
-}
-
-function pickFromGallery() {
-    closeAvatarSheet();
-    document.getElementById('avatarFileInput').click();
-}
-
-document.getElementById('avatarFileInput').addEventListener('change', async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 10_000_000) {
-        showToast('Файл слишком большой (макс 10MB)');
-        return;
-    }
-    await uploadAvatarFile(file);
-});
-
-// Загрузка файла из галереи: сжимаем → отправляем как multipart
-async function uploadAvatarFile(file) {
-    if (!currentUser) return;
-    showToast('Обработка...');
-
-    try {
-        const compressedBlob = await compressImage(file, 512, 0.85);
-
-        const formData = new FormData();
-        formData.append('telegram_id', currentUser.telegram_id);
-        formData.append('file', compressedBlob, 'avatar.jpg');
-
-        const res = await fetch(`${API_URL}/api/profile/avatar`, {
-            method: 'POST',
-            body: formData
-        });
-        if (!res.ok) {
-            const err = await res.json().catch(() => ({}));
-            throw new Error(err.detail || 'Upload failed');
+        // ============ AVATAR ============
+        function openAvatarSheet() {
+            document.getElementById('sheetOverlay').classList.add('active');
+            document.getElementById('avatarSheet').classList.add('active');
+            haptic();
         }
-        currentUser = await res.json();
-        renderProfileAvatar(currentUser);
-        showToast('✅ Аватар обновлён');
-        haptic('medium');
-    } catch (e) {
-        console.error('Avatar error:', e);
-        showToast(e.message || 'Ошибка загрузки');
-    }
-}
+        function closeAvatarSheet() {
+            document.getElementById('sheetOverlay').classList.remove('active');
+            document.getElementById('avatarSheet').classList.remove('active');
+        }
 
-// Загрузка фото из Telegram: скачиваем → сжимаем → отправляем как файл
-async function uploadAvatarFromUrl(url) {
-    if (!currentUser) return;
-    showToast('Загрузка...');
-    try {
-        const imgRes = await fetch(url);
-        const blob = await imgRes.blob();
-        const file = new File([blob], 'avatar.jpg', { type: blob.type || 'image/jpeg' });
-        await uploadAvatarFile(file);
-    } catch (e) {
-        console.error('Telegram avatar error:', e);
-        showToast('Ошибка загрузки фото');
-    }
-}
-
-// Сжатие картинки через canvas
-function compressImage(file, maxSize, quality) {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        const reader = new FileReader();
-
-        reader.onload = (e) => { img.src = e.target.result; };
-        reader.onerror = reject;
-        img.onerror = reject;
-
-        img.onload = () => {
-            let { width, height } = img;
-            if (width > height) {
-                if (width > maxSize) {
-                    height = Math.round(height * maxSize / width);
-                    width = maxSize;
-                }
+        function pickFromTelegram() {
+            closeAvatarSheet();
+            const user = tg.initDataUnsafe?.user;
+            if (user?.photo_url) {
+                uploadAvatarFromUrl(user.photo_url);
             } else {
-                if (height > maxSize) {
-                    width = Math.round(width * maxSize / height);
-                    height = maxSize;
-                }
+                showToast('У вас нет фото в Telegram');
             }
+        }
 
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
+        function pickFromGallery() {
+            closeAvatarSheet();
+            document.getElementById('avatarFileInput').click();
+        }
 
-            canvas.toBlob(
-                (blob) => blob ? resolve(blob) : reject(new Error('Сжатие не удалось')),
-                'image/jpeg',
-                quality
-            );
-        };
-
-        reader.readAsDataURL(file);
-    });
-}
-
-async function removeAvatar() {
-    closeAvatarSheet();
-    if (!currentUser) return;
-    try {
-        const res = await fetch(`${API_URL}/api/profile/update`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                telegram_id: currentUser.telegram_id,
-                custom_avatar: ''
-            })
+        document.getElementById('avatarFileInput').addEventListener('change', async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            if (file.size > 10_000_000) {
+                showToast('Файл слишком большой (макс 10MB)');
+                return;
+            }
+            await uploadAvatarFile(file);
         });
-        if (!res.ok) throw new Error('Remove failed');
-        currentUser = await res.json();
-        renderProfileAvatar(currentUser);
-        showToast('Аватар удалён');
-    } catch (e) {
-        console.error(e);
-        showToast('Ошибка удаления');
-    }
-}
+
+        async function uploadAvatarFile(file) {
+            if (!currentUser) return;
+            showToast('Обработка...');
+
+            try {
+                const compressedBlob = await compressImage(file, 512, 0.85);
+
+                const formData = new FormData();
+                formData.append('telegram_id', currentUser.telegram_id);
+                formData.append('file', compressedBlob, 'avatar.jpg');
+
+                const res = await fetch(`${API_URL}/profile-avatar`, {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    throw new Error(err.detail || err.error || 'Upload failed');
+                }
+                currentUser = await res.json();
+                renderProfileAvatar(currentUser);
+                showToast('✅ Аватар обновлён');
+                haptic('medium');
+            } catch (e) {
+                console.error('Avatar error:', e);
+                showToast(e.message || 'Ошибка загрузки');
+            }
+        }
+
+        async function uploadAvatarFromUrl(url) {
+            if (!currentUser) return;
+            showToast('Загрузка...');
+            try {
+                const imgRes = await fetch(url);
+                const blob = await imgRes.blob();
+                const file = new File([blob], 'avatar.jpg', { type: blob.type || 'image/jpeg' });
+                await uploadAvatarFile(file);
+            } catch (e) {
+                console.error('Telegram avatar error:', e);
+                showToast('Ошибка загрузки фото');
+            }
+        }
+
+        function compressImage(file, maxSize, quality) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                const reader = new FileReader();
+                reader.onload = (e) => { img.src = e.target.result; };
+                reader.onerror = reject;
+                img.onerror = reject;
+                img.onload = () => {
+                    let { width, height } = img;
+                    if (width > height) {
+                        if (width > maxSize) { height = Math.round(height * maxSize / width); width = maxSize; }
+                    } else {
+                        if (height > maxSize) { width = Math.round(width * maxSize / height); height = maxSize; }
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    canvas.toBlob(
+                        (blob) => blob ? resolve(blob) : reject(new Error('Сжатие не удалось')),
+                        'image/jpeg',
+                        quality
+                    );
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function removeAvatar() {
+            closeAvatarSheet();
+            if (!currentUser) return;
+            try {
+                const res = await fetch(`${API_URL}/profile-update`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        telegram_id: currentUser.telegram_id,
+                        custom_avatar: ''
+                    })
+                });
+                if (!res.ok) throw new Error('Remove failed');
+                currentUser = await res.json();
+                renderProfileAvatar(currentUser);
+                showToast('Аватар удалён');
+            } catch (e) {
+                console.error(e);
+                showToast('Ошибка удаления');
+            }
+        }
 
         // ============ FIND MATCH ============
         async function findMatch() {
@@ -1007,7 +808,7 @@ async function removeAvatar() {
             haptic('medium');
 
             try {
-                await fetch(`${API_URL}/api/find_match`, {
+                await fetch(`${API_URL}/find-match`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -1034,7 +835,7 @@ async function removeAvatar() {
         // ============ LEADERBOARD ============
         async function loadLeaderboard() {
             try {
-                const res = await fetch(`${API_URL}/api/leaderboard`);
+                const res = await fetch(`${API_URL}/leaderboard`);
                 const data = await res.json();
                 renderLeaderboard(data);
             } catch (e) {
@@ -1047,9 +848,7 @@ async function removeAvatar() {
             container.innerHTML = data.map((user, i) => {
                 const avatarSrc = user.custom_avatar || user.photo_url;
                 const initial = (user.display_name || 'U')[0].toUpperCase();
-                const avatarHTML = avatarSrc
-                    ? `<img src="${avatarSrc}" alt="">`
-                    : initial;
+                const avatarHTML = avatarSrc ? `<img src="${avatarSrc}" alt="">` : initial;
                 return `
                     <div class="leaderboard-item">
                         <span class="leaderboard-rank">#${i + 1}</span>
