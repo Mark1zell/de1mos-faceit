@@ -210,6 +210,8 @@
         }
         .save-btn:active { transform: scale(0.97); }
         .save-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+        .save-btn.secondary { background: rgba(0,224,138,0.1); color: var(--emerald); border: 1px solid var(--border-strong); }
+        .save-btn.danger { background: rgba(255,84,112,0.1); color: var(--red); border: 1px solid rgba(255,84,112,0.3); }
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0;
             display: flex; justify-content: space-around;
@@ -244,10 +246,11 @@
             font-size: 13px; font-weight: 600; opacity: 0;
             transition: all 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
             pointer-events: none; border: 1px solid var(--border-strong);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.55); z-index: 200; white-space: nowrap;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.55); z-index: 200;
+            max-width: 80vw; text-align: center;
         }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-        #avatarFileInput { display: none; }
+        #avatarFileInput, #clubLogoFileInput { display: none; }
         .sheet-overlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.6);
             backdrop-filter: blur(4px); z-index: 300;
@@ -262,6 +265,7 @@
             padding: 20px 20px 28px; z-index: 301;
             transform: translateY(100%);
             transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+            max-height: 85vh; overflow-y: auto;
         }
         .sheet.active { transform: translateY(0); }
         .sheet-title { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--emerald); margin-bottom: 14px; text-align: center; }
@@ -293,6 +297,128 @@
             text-align: center; padding: 24px 12px; color: var(--hint);
             font-size: 13px;
         }
+        .club-card {
+            background: linear-gradient(140deg, rgba(0,224,138,0.08), rgba(0,184,116,0.02) 45%, rgba(5,10,8,0.6));
+            border: 1px solid var(--border-strong);
+            border-radius: 22px; padding: 20px; margin-bottom: 14px;
+            position: relative; overflow: hidden;
+        }
+        .club-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+        .club-logo {
+            width: 72px; height: 72px; border-radius: 20px;
+            background: linear-gradient(135deg, var(--emerald), var(--emerald-2));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 26px; color: #04140e;
+            overflow: hidden; flex-shrink: 0;
+            box-shadow: 0 0 0 2px rgba(0,224,138,0.2), 0 0 16px rgba(0,224,138,0.2);
+        }
+        .club-logo img { width: 100%; height: 100%; object-fit: cover; }
+        .club-name { font-size: 20px; font-weight: 800; }
+        .club-tag { font-size: 12px; color: var(--emerald); font-weight: 700; margin-top: 3px; letter-spacing: 1px; }
+        .club-desc { color: var(--hint); font-size: 13px; line-height: 1.5; margin-bottom: 14px; }
+
+        /* CHAT */
+        .chat-list-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 14px; background: var(--card); border: 1px solid var(--border);
+            border-radius: 14px; margin-bottom: 8px; cursor: pointer;
+        }
+        .chat-list-item:active { border-color: var(--border-strong); }
+        .chat-list-avatar {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--emerald), var(--emerald-2));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 16px; color: #04140e;
+            overflow: hidden; flex-shrink: 0;
+        }
+        .chat-list-avatar.square { border-radius: 14px; }
+        .chat-list-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .chat-list-info { flex: 1; min-width: 0; }
+        .chat-list-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .chat-list-preview { font-size: 12px; color: var(--hint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+
+        .chat-view {
+            position: fixed; inset: 0; z-index: 400;
+            background: var(--bg);
+            display: none;
+            flex-direction: column;
+        }
+        .chat-view.active { display: flex; }
+        .chat-view-header {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 14px;
+            background: rgba(5,8,7,0.9);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .chat-back-btn {
+            background: none; border: none; color: var(--emerald);
+            font-size: 22px; cursor: pointer; padding: 4px 8px;
+            font-family: inherit;
+        }
+        .chat-view-title { font-size: 15px; font-weight: 700; flex: 1; min-width: 0;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .chat-messages {
+            flex: 1; overflow-y: auto;
+            padding: 14px 12px;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .chat-bubble {
+            max-width: 78%;
+            padding: 10px 14px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+            position: relative;
+        }
+        .chat-bubble.me {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #00e08a, #00b874);
+            color: #04140e;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-bubble.them {
+            align-self: flex-start;
+            background: rgba(0,224,138,0.08);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-bottom-left-radius: 4px;
+        }
+        .chat-bubble-author {
+            font-size: 11px; font-weight: 700; color: var(--emerald);
+            margin-bottom: 3px;
+        }
+        .chat-bubble-time {
+            font-size: 10px; opacity: 0.6; margin-top: 4px; text-align: right;
+        }
+        .chat-input-bar {
+            display: flex; gap: 8px; padding: 10px 12px;
+            background: rgba(5,8,7,0.9);
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .chat-input-bar input {
+            flex: 1;
+            background: rgba(0,224,138,0.05);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 12px 16px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+        }
+        .chat-input-bar input:focus { border-color: var(--border-strong); }
+        .chat-send-btn {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: var(--emerald); color: #04140e; border: none;
+            font-size: 18px; cursor: pointer; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .chat-send-btn:active { transform: scale(0.9); }
+        .chat-send-btn:disabled { opacity: 0.5; }
     </style>
 </head>
 <body>
@@ -327,14 +453,14 @@
             <button class="menu-item" onclick="openFriendsPage()">
                 <span class="menu-icon">👥</span> Друзья
             </button>
-            <button class="menu-item" onclick="showToast('Раздел в разработке')">
-                <span class="menu-icon">🏆</span> Клубы
+            <button class="menu-item" onclick="openClubPage()">
+                <span class="menu-icon">🛡️</span> Клуб
             </button>
             <button class="menu-item" onclick="showToast('Раздел в разработке')">
                 <span class="menu-icon">📊</span> Статистика
             </button>
-            <button class="menu-item" onclick="showToast('Раздел в разработке')">
-                <span class="menu-icon">💬</span> Чат
+            <button class="menu-item" onclick="openChatPage()">
+                <span class="menu-icon">💬</span> Чаты
             </button>
         </div>
 
@@ -384,6 +510,17 @@
         </div>
     </div>
 
+    <!-- ============ CLUB ============ -->
+    <div class="container page" id="page-club">
+        <div id="clubContent"><div class="empty">Загрузка...</div></div>
+    </div>
+
+    <!-- ============ CHAT LIST ============ -->
+    <div class="container page" id="page-chat">
+        <div class="section-title" style="margin-top: 0;">Чаты</div>
+        <div id="chatList"><div class="empty">Загрузка...</div></div>
+    </div>
+
     <!-- ============ NAV ============ -->
     <nav class="bottom-nav">
         <button class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard')">
@@ -392,35 +529,52 @@
         <button class="nav-item" data-page="profile" onclick="switchPage('profile')">
             <span class="nav-icon">👤</span><span>Профиль</span>
         </button>
-        <button class="nav-item" data-page="friends" onclick="openFriendsPage()">
-            <span class="nav-icon">👥</span><span>Друзья</span>
+        <button class="nav-item" data-page="club" onclick="openClubPage()">
+            <span class="nav-icon">🛡️</span><span>Клуб</span>
         </button>
-        <button class="nav-item" onclick="showToast('Раздел в разработке')">
-            <span class="nav-icon">💬</span><span>Чат</span>
+        <button class="nav-item" data-page="chat" onclick="openChatPage()">
+            <span class="nav-icon">💬</span><span>Чаты</span>
         </button>
     </nav>
 
-    <div class="sheet-overlay" id="sheetOverlay" onclick="closeAvatarSheet()"></div>
+    <!-- ============ CHAT VIEW (полноэкранный) ============ -->
+    <div class="chat-view" id="chatView">
+        <div class="chat-view-header">
+            <button class="chat-back-btn" onclick="closeChatView()">←</button>
+            <div class="chat-list-avatar" id="chatViewAvatar">?</div>
+            <div class="chat-view-title" id="chatViewTitle">—</div>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-bar">
+            <input type="text" id="chatInput" placeholder="Сообщение..." autocomplete="off">
+            <button class="chat-send-btn" id="chatSendBtn" onclick="sendMessage()">➤</button>
+        </div>
+    </div>
+
+    <!-- ============ SHEETS ============ -->
+    <div class="sheet-overlay" id="sheetOverlay" onclick="closeAllSheets()"></div>
     <div class="sheet" id="avatarSheet">
         <div class="sheet-title">Сменить аватар</div>
-        <button class="sheet-option" onclick="pickFromTelegram()">
-            <span style="font-size:18px;">📷</span> Фото из Telegram
-        </button>
-        <button class="sheet-option" onclick="pickFromGallery()">
-            <span style="font-size:18px;">🖼️</span> Загрузить из галереи
-        </button>
-        <button class="sheet-option" onclick="removeAvatar()" style="color: var(--red);">
-            <span style="font-size:18px;">🗑️</span> Удалить аватар
-        </button>
-        <button class="sheet-cancel" onclick="closeAvatarSheet()">ОТМЕНА</button>
+        <button class="sheet-option" onclick="pickFromTelegram()"><span style="font-size:18px;">📷</span> Фото из Telegram</button>
+        <button class="sheet-option" onclick="pickFromGallery()"><span style="font-size:18px;">🖼️</span> Загрузить из галереи</button>
+        <button class="sheet-option" onclick="removeAvatar()" style="color: var(--red);"><span style="font-size:18px;">🗑️</span> Удалить аватар</button>
+        <button class="sheet-cancel" onclick="closeAllSheets()">ОТМЕНА</button>
+    </div>
+
+    <div class="sheet" id="clubLogoSheet">
+        <div class="sheet-title">Эмблема клуба</div>
+        <button class="sheet-option" onclick="pickClubLogoFromGallery()"><span style="font-size:18px;">🖼️</span> Загрузить из галереи</button>
+        <button class="sheet-option" onclick="removeClubLogo()" style="color: var(--red);"><span style="font-size:18px;">🗑️</span> Удалить эмблему</button>
+        <button class="sheet-cancel" onclick="closeAllSheets()">ОТМЕНА</button>
     </div>
 
     <input type="file" id="avatarFileInput" accept="image/*">
+    <input type="file" id="clubLogoFileInput" accept="image/*">
     <div class="toast" id="toast"></div>
 
     <script>
         // ============================================================
-        // НАСТРОЙКИ SUPABASE
+        // SUPABASE
         // ============================================================
         const SUPABASE_URL = 'https://mfvtdsgjejilajxxwbts.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1mdnRkc2dqZWppbGFqeHh3YnRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxNjQwMzAsImV4cCI6MjEwNDc0MDAzMH0.RdmxBLwFOMhNzZceU21yyorm7Xh_zOJmwv0QogD5iwo';
@@ -440,13 +594,17 @@
         }
 
         // ============================================================
+        // STATE
+        // ============================================================
+        let myClub = null;              // {club, members[]}
+        let currentChat = null;         // {type:'club'|'dm', id, name, avatar}
+        let chatChannel = null;         // Realtime channel
+        let clubChannel = null;
+
+        // ============================================================
         // INIT
         // ============================================================
         async function init() {
-            console.log('🚀 init() start');
-            console.log('tg:', tg);
-            console.log('initDataUnsafe:', tg?.initDataUnsafe);
-
             if (!tg && !location.search.includes('dev=1')) {
                 showToast('Откройте приложение через Telegram');
                 return;
@@ -454,57 +612,35 @@
 
             let user = tg?.initDataUnsafe?.user;
 
-            // === DEV MODE ===
             if (!user && (location.hostname === 'localhost' || location.search.includes('dev=1'))) {
-                user = {
-                    id: 999999999,
-                    first_name: 'DevUser',
-                    username: 'devuser',
-                    photo_url: null
-                };
-                console.warn('⚠️ DEV MODE: фейковый юзер', user);
+                const devId = Number(new URLSearchParams(location.search).get('id')) || 999999999;
+                user = { id: devId, first_name: 'DevUser' + devId, username: 'dev' + devId, photo_url: null };
+                console.warn('⚠️ DEV MODE', user);
             }
-            // ================
 
-            console.log('tg user:', user);
-
-            if (!user) {
-                showToast('Не удалось получить данные Telegram');
-                return;
-            }
+            if (!user) { showToast('Не удалось получить данные Telegram'); return; }
 
             setHeaderAvatar(user.photo_url, user.first_name);
 
             try {
-                const payload = {
-                    telegram_id: user.id,
-                    username: user.username || null,
-                    display_name: user.first_name || user.username || 'Игрок',
-                    photo_url: user.photo_url || null
-                };
-                console.log('📡 upsert →', payload);
-
                 const { data, error } = await sb
                     .from('users')
-                    .upsert(payload, { onConflict: 'telegram_id' })
+                    .upsert({
+                        telegram_id: user.id,
+                        username: user.username || null,
+                        display_name: user.first_name || user.username || 'Игрок',
+                        photo_url: user.photo_url || null
+                    }, { onConflict: 'telegram_id' })
                     .select()
                     .single();
-
-                console.log('📥 upsert result:', { data, error });
-
                 if (error) throw error;
 
                 currentUser = data;
                 renderAll();
                 loadLeaderboard();
-                console.log('✅ init() done, currentUser =', currentUser);
             } catch (e) {
-                console.error('❌ Init error:', e);
-                console.error('   message:', e?.message);
-                console.error('   details:', e?.details);
-                console.error('   hint:', e?.hint);
-                console.error('   code:', e?.code);
-                showToast('Ошибка загрузки: ' + (e?.message || e));
+                console.error('Init error:', e);
+                showToast('Ошибка: ' + (e?.message || e));
             }
         }
 
@@ -517,26 +653,19 @@
         }
 
         function renderDashboard(user) {
-            const winrate = user.matches_played > 0
-                ? Math.round((user.wins / user.matches_played) * 100)
-                : 0;
-
+            const winrate = user.matches_played > 0 ? Math.round((user.wins / user.matches_played) * 100) : 0;
             document.getElementById('eloValue').textContent = user.elo ?? 1000;
             document.getElementById('eloLevel').textContent = `Уровень ${user.level ?? 1}`;
             document.getElementById('statMatches').textContent = user.matches_played ?? 0;
             document.getElementById('statWins').textContent = user.wins ?? 0;
             document.getElementById('statWinrate').textContent = winrate + '%';
-
             const progress = ((user.elo ?? 1000) % 250) / 250 * 100;
-            setTimeout(() => {
-                document.getElementById('eloProgress').style.width = progress + '%';
-            }, 200);
+            setTimeout(() => { document.getElementById('eloProgress').style.width = progress + '%'; }, 200);
         }
 
         function renderProfile(user) {
             document.getElementById('profileName').textContent = user.display_name || 'Без имени';
-            document.getElementById('profileUsername').innerHTML =
-                user.username ? `@<span>${user.username}</span>` : '@—';
+            document.getElementById('profileUsername').innerHTML = user.username ? `@<span>${user.username}</span>` : '@—';
             document.getElementById('standoffIdInput').value = user.standoff_id || '';
             document.getElementById('nicknameInput').value = user.display_name || '';
             renderProfileAvatar(user);
@@ -545,11 +674,9 @@
         function renderProfileAvatar(user) {
             const src = user.custom_avatar || user.photo_url;
             const initial = (user.display_name || 'U')[0].toUpperCase();
-
             const profileEl = document.getElementById('profileAvatar');
             if (src) profileEl.innerHTML = `<img src="${src}" alt="">`;
             else profileEl.textContent = initial;
-
             const headerEl = document.getElementById('headerAvatar');
             if (src) headerEl.innerHTML = `<img src="${src}" alt="">`;
             else headerEl.textContent = initial;
@@ -572,46 +699,30 @@
         }
 
         // ============================================================
-        // SAVE PROFILE
+        // PROFILE SAVE
         // ============================================================
         async function saveProfile() {
             if (!currentUser) return;
             const btn = document.getElementById('saveBtn');
             const standoffId = document.getElementById('standoffIdInput').value.trim();
             const nickname = document.getElementById('nicknameInput').value.trim();
-
             if (!nickname) { showToast('Никнейм не может быть пустым'); return; }
-            if (nickname.length > 32) { showToast('Никнейм слишком длинный'); return; }
 
-            btn.disabled = true;
-            btn.textContent = 'СОХРАНЕНИЕ...';
-
+            btn.disabled = true; btn.textContent = 'СОХРАНЕНИЕ...';
             try {
-                console.log('💾 saveProfile →', { standoff_id: standoffId, display_name: nickname });
-
                 const { data, error } = await sb
                     .from('users')
-                    .update({
-                        standoff_id: standoffId || null,
-                        display_name: nickname
-                    })
+                    .update({ standoff_id: standoffId || null, display_name: nickname })
                     .eq('telegram_id', currentUser.telegram_id)
-                    .select()
-                    .single();
-
-                console.log('💾 saveProfile result:', { data, error });
+                    .select().single();
                 if (error) throw error;
-
                 currentUser = data;
                 renderAll();
                 showToast('✅ Профиль сохранён');
-                haptic('medium');
             } catch (e) {
-                console.error('❌ Save error:', e);
-                showToast('Ошибка сохранения: ' + (e?.message || e));
+                showToast('Ошибка: ' + e.message);
             } finally {
-                btn.disabled = false;
-                btn.textContent = '💾 СОХРАНИТЬ';
+                btn.disabled = false; btn.textContent = '💾 СОХРАНИТЬ';
             }
         }
 
@@ -623,80 +734,91 @@
             document.getElementById('avatarSheet').classList.add('active');
             haptic();
         }
-        function closeAvatarSheet() {
+        function openClubLogoSheet() {
+            document.getElementById('sheetOverlay').classList.add('active');
+            document.getElementById('clubLogoSheet').classList.add('active');
+            haptic();
+        }
+        function closeAllSheets() {
+            document.querySelectorAll('.sheet').forEach(s => s.classList.remove('active'));
             document.getElementById('sheetOverlay').classList.remove('active');
-            document.getElementById('avatarSheet').classList.remove('active');
         }
 
         function pickFromTelegram() {
-            closeAvatarSheet();
+            closeAllSheets();
             const user = tg?.initDataUnsafe?.user;
             if (user?.photo_url) uploadAvatarFromUrl(user.photo_url);
             else showToast('У вас нет фото в Telegram');
         }
         function pickFromGallery() {
-            closeAvatarSheet();
+            closeAllSheets();
             document.getElementById('avatarFileInput').click();
+        }
+        function pickClubLogoFromGallery() {
+            closeAllSheets();
+            document.getElementById('clubLogoFileInput').click();
         }
 
         document.getElementById('avatarFileInput').addEventListener('change', async (e) => {
             const file = e.target.files?.[0];
             e.target.value = '';
             if (!file) return;
-            if (file.size > 10_000_000) { showToast('Файл слишком большой (макс 10MB)'); return; }
             await uploadAvatarFile(file);
         });
 
+        document.getElementById('clubLogoFileInput').addEventListener('change', async (e) => {
+            const file = e.target.files?.[0];
+            e.target.value = '';
+            if (!file || !myClub?.club) return;
+            await uploadClubLogo(file);
+        });
+
         async function uploadAvatarFile(file) {
-            console.log('📸 uploadAvatarFile:', file.name, file.size, file.type);
-            console.log('   currentUser:', currentUser);
-
-            if (!currentUser) {
-                console.warn('❌ currentUser null → прерываю');
-                showToast('Профиль ещё не загружен');
-                return;
-            }
-
+            if (!currentUser) return;
             showToast('Обработка...');
             try {
                 const blob = await compressImage(file, 512, 0.85);
-                console.log('   сжато:', blob.size, 'байт');
-
                 const path = `${currentUser.telegram_id}/${Date.now()}.jpg`;
-                console.log('   upload →', path);
-
-                const { error: upErr } = await sb.storage
-                    .from(STORAGE_BUCKET)
+                const { error: upErr } = await sb.storage.from(STORAGE_BUCKET)
                     .upload(path, blob, { contentType: 'image/jpeg', upsert: true });
-
-                console.log('   upload err:', upErr);
                 if (upErr) throw upErr;
 
                 const { data: urlData } = sb.storage.from(STORAGE_BUCKET).getPublicUrl(path);
-                const publicUrl = urlData.publicUrl;
-                console.log('   publicUrl:', publicUrl);
-
-                const { data, error } = await sb
-                    .from('users')
-                    .update({ custom_avatar: publicUrl })
+                const { data, error } = await sb.from('users')
+                    .update({ custom_avatar: urlData.publicUrl })
                     .eq('telegram_id', currentUser.telegram_id)
-                    .select()
-                    .single();
-
-                console.log('   update result:', { data, error });
+                    .select().single();
                 if (error) throw error;
 
                 currentUser = data;
                 renderProfileAvatar(currentUser);
                 showToast('✅ Аватар обновлён');
-                haptic('medium');
             } catch (e) {
-                console.error('❌ Avatar error:', e);
-                console.error('   message:', e?.message);
-                console.error('   details:', e?.details);
-                console.error('   hint:', e?.hint);
-                console.error('   code:', e?.code);
-                showToast(e.message || 'Ошибка загрузки');
+                console.error(e);
+                showToast('Ошибка: ' + e.message);
+            }
+        }
+
+        async function uploadClubLogo(file) {
+            showToast('Обработка...');
+            try {
+                const blob = await compressImage(file, 512, 0.85);
+                const path = `clubs/${myClub.club.id}/${Date.now()}.jpg`;
+                const { error: upErr } = await sb.storage.from(STORAGE_BUCKET)
+                    .upload(path, blob, { contentType: 'image/jpeg', upsert: true });
+                if (upErr) throw upErr;
+                const { data: urlData } = sb.storage.from(STORAGE_BUCKET).getPublicUrl(path);
+
+                const { error } = await sb.from('clubs')
+                    .update({ logo_url: urlData.publicUrl })
+                    .eq('id', myClub.club.id);
+                if (error) throw error;
+
+                showToast('✅ Эмблема обновлена');
+                openClubPage();
+            } catch (e) {
+                console.error(e);
+                showToast('Ошибка: ' + e.message);
             }
         }
 
@@ -709,7 +831,7 @@
                 const file = new File([blob], 'avatar.jpg', { type: blob.type || 'image/jpeg' });
                 await uploadAvatarFile(file);
             } catch (e) {
-                console.error('❌ Telegram avatar error:', e);
+                console.error(e);
                 showToast('Ошибка загрузки фото');
             }
         }
@@ -729,8 +851,7 @@
                         if (height > maxSize) { width = Math.round(width * maxSize / height); height = maxSize; }
                     }
                     const canvas = document.createElement('canvas');
-                    canvas.width = width;
-                    canvas.height = height;
+                    canvas.width = width; canvas.height = height;
                     canvas.getContext('2d').drawImage(img, 0, 0, width, height);
                     canvas.toBlob(
                         (blob) => blob ? resolve(blob) : reject(new Error('Сжатие не удалось')),
@@ -742,60 +863,53 @@
         }
 
         async function removeAvatar() {
-            closeAvatarSheet();
+            closeAllSheets();
             if (!currentUser) return;
             try {
-                const { data, error } = await sb
-                    .from('users')
+                const { data, error } = await sb.from('users')
                     .update({ custom_avatar: null })
                     .eq('telegram_id', currentUser.telegram_id)
-                    .select()
-                    .single();
+                    .select().single();
                 if (error) throw error;
-
                 currentUser = data;
                 renderProfileAvatar(currentUser);
                 showToast('Аватар удалён');
-            } catch (e) {
-                console.error(e);
-                showToast('Ошибка удаления');
-            }
+            } catch (e) { showToast('Ошибка'); }
+        }
+
+        async function removeClubLogo() {
+            closeAllSheets();
+            if (!myClub?.club) return;
+            try {
+                await sb.from('clubs').update({ logo_url: null }).eq('id', myClub.club.id);
+                openClubPage();
+            } catch (e) { showToast('Ошибка'); }
         }
 
         // ============================================================
-        // FIND MATCH
+        // FIND MATCH (заглушка)
         // ============================================================
         async function findMatch() {
             if (!currentUser) { showToast('Сначала авторизуйтесь'); return; }
             const btn = document.getElementById('playBtn');
             const loading = document.getElementById('loading');
-
-            btn.disabled = true;
-            btn.textContent = 'ПОИСК...';
+            btn.disabled = true; btn.textContent = 'ПОИСК...';
             loading.classList.add('active');
-            haptic('medium');
 
             try {
-                console.log('🎮 findMatch → queue upsert');
-                const { error } = await sb.from('queue').upsert({
+                await sb.from('queue').upsert({
                     telegram_id: currentUser.telegram_id,
                     joined_at: new Date().toISOString()
                 }, { onConflict: 'telegram_id' });
 
-                console.log('🎮 queue result:', { error });
-                if (error) throw error;
-
                 setTimeout(() => {
                     showToast('Поиск запущен! Ожидайте соперника.');
-                    btn.disabled = false;
-                    btn.textContent = '🎮 ИГРАТЬ';
+                    btn.disabled = false; btn.textContent = '🎮 ИГРАТЬ';
                     loading.classList.remove('active');
                 }, 2500);
             } catch (e) {
-                console.error('❌ Find match error:', e);
-                showToast('Ошибка поиска матча: ' + (e?.message || e));
-                btn.disabled = false;
-                btn.textContent = '🎮 ИГРАТЬ';
+                showToast('Ошибка поиска');
+                btn.disabled = false; btn.textContent = '🎮 ИГРАТЬ';
                 loading.classList.remove('active');
             }
         }
@@ -805,115 +919,78 @@
         // ============================================================
         async function loadLeaderboard() {
             try {
-                const { data, error } = await sb
-                    .from('users')
+                const { data, error } = await sb.from('users')
                     .select('telegram_id, display_name, username, custom_avatar, photo_url, elo')
-                    .order('elo', { ascending: false })
-                    .limit(50);
+                    .order('elo', { ascending: false }).limit(50);
                 if (error) throw error;
-                renderLeaderboard(data);
+                const c = document.getElementById('leaderboard');
+                if (!data?.length) { c.innerHTML = '<div class="empty">Пока никого нет</div>'; return; }
+                c.innerHTML = data.map((user, i) => {
+                    const src = user.custom_avatar || user.photo_url;
+                    const initial = (user.display_name || 'U')[0].toUpperCase();
+                    const av = src ? `<img src="${src}" alt="">` : initial;
+                    return `
+                        <div class="leaderboard-item">
+                            <span class="leaderboard-rank">#${i + 1}</span>
+                            <div class="lb-avatar">${av}</div>
+                            <span class="leaderboard-name">${escapeHtml(user.display_name || 'Игрок')}</span>
+                            <span class="leaderboard-elo">${user.elo}</span>
+                        </div>`;
+                }).join('');
             } catch (e) {
-                console.error('Leaderboard error:', e);
-                document.getElementById('leaderboard').innerHTML =
-                    '<div class="empty">Не удалось загрузить</div>';
+                document.getElementById('leaderboard').innerHTML = '<div class="empty">Ошибка загрузки</div>';
             }
-        }
-
-        function renderLeaderboard(data) {
-            const container = document.getElementById('leaderboard');
-            if (!Array.isArray(data) || data.length === 0) {
-                container.innerHTML = '<div class="empty">Пока никого нет</div>';
-                return;
-            }
-            container.innerHTML = data.map((user, i) => {
-                const avatarSrc = user.custom_avatar || user.photo_url;
-                const initial = (user.display_name || 'U')[0].toUpperCase();
-                const avatarHTML = avatarSrc ? `<img src="${avatarSrc}" alt="">` : initial;
-                return `
-                    <div class="leaderboard-item">
-                        <span class="leaderboard-rank">#${i + 1}</span>
-                        <div class="lb-avatar">${avatarHTML}</div>
-                        <span class="leaderboard-name">${escapeHtml(user.display_name || 'Игрок')}</span>
-                        <span class="leaderboard-elo">${user.elo}</span>
-                    </div>
-                `;
-            }).join('');
         }
 
         // ============================================================
         // FRIENDS
         // ============================================================
-        function openFriendsPage() {
-            switchPage('friends');
-            loadFriends();
-        }
+        function openFriendsPage() { switchPage('friends'); loadFriends(); }
 
         async function searchFriends() {
             const query = document.getElementById('friendSearchInput').value.trim();
             if (query.length < 2) { showToast('Введите минимум 2 символа'); return; }
-
             const container = document.getElementById('friendSearchResults');
             container.innerHTML = '<div class="empty">Поиск...</div>';
-
             try {
                 const safe = query.replace(/[%_]/g, '');
-                const { data, error } = await sb
-                    .from('users')
+                const { data, error } = await sb.from('users')
                     .select('telegram_id, display_name, username, custom_avatar, photo_url, elo')
                     .or(`display_name.ilike.%${safe}%,username.ilike.%${safe}%`)
-                    .neq('telegram_id', currentUser.telegram_id)
-                    .limit(20);
+                    .neq('telegram_id', currentUser.telegram_id).limit(20);
                 if (error) throw error;
+                if (!data?.length) { container.innerHTML = '<div class="empty">Ничего не найдено</div>'; return; }
 
-                if (!data || data.length === 0) {
-                    container.innerHTML = '<div class="empty">Ничего не найдено</div>';
-                    return;
-                }
-
-                const { data: rels } = await sb
-                    .from('friendships')
+                const { data: rels } = await sb.from('friendships')
                     .select('requester_id, addressee_id, status')
                     .or(`requester_id.eq.${currentUser.telegram_id},addressee_id.eq.${currentUser.telegram_id}`);
-
                 const relMap = {};
                 (rels || []).forEach(r => {
-                    const other = r.requester_id === currentUser.telegram_id
-                        ? r.addressee_id
-                        : r.requester_id;
+                    const other = r.requester_id === currentUser.telegram_id ? r.addressee_id : r.requester_id;
                     relMap[other] = r.status;
                 });
 
                 container.innerHTML = data.map(u => {
-                    const avatarSrc = u.custom_avatar || u.photo_url;
+                    const src = u.custom_avatar || u.photo_url;
                     const initial = (u.display_name || 'U')[0].toUpperCase();
-                    const avatarHTML = avatarSrc ? `<img src="${avatarSrc}" alt="">` : initial;
+                    const av = src ? `<img src="${src}" alt="">` : initial;
                     const rel = relMap[u.telegram_id];
-
-                    let actionHtml;
-                    if (rel === 'accepted') {
-                        actionHtml = `<button class="friend-action pending" disabled>✓ Друг</button>`;
-                    } else if (rel === 'pending') {
-                        actionHtml = `<button class="friend-action pending" disabled>⏳ Запрос</button>`;
-                    } else {
-                        actionHtml = `<button class="friend-action add" onclick="sendFriendRequest(${u.telegram_id}, this)">+ Добавить</button>`;
-                    }
-
+                    let action;
+                    if (rel === 'accepted') action = `<button class="friend-action pending" disabled>✓ Друг</button>`;
+                    else if (rel === 'pending') action = `<button class="friend-action pending" disabled>⏳ Запрос</button>`;
+                    else action = `<button class="friend-action add" onclick="sendFriendRequest(${u.telegram_id}, this)">+ Добавить</button>`;
                     return `
                         <div class="leaderboard-item">
-                            <div class="lb-avatar">${avatarHTML}</div>
-                            <div style="flex: 1; min-width: 0;">
+                            <div class="lb-avatar">${av}</div>
+                            <div style="flex:1;min-width:0;">
                                 <div class="leaderboard-name">${escapeHtml(u.display_name || 'Игрок')}</div>
-                                <div style="font-size: 11px; color: var(--hint);">
-                                    ${u.username ? '@' + u.username + ' · ' : ''}ELO ${u.elo}
-                                </div>
+                                <div style="font-size:11px;color:var(--hint);">${u.username ? '@' + u.username + ' · ' : ''}ELO ${u.elo}</div>
                             </div>
-                            ${actionHtml}
-                        </div>
-                    `;
+                            ${action}
+                        </div>`;
                 }).join('');
             } catch (e) {
-                console.error('Search error:', e);
-                container.innerHTML = '<div class="empty" style="color: var(--red);">Ошибка поиска</div>';
+                container.innerHTML = '<div class="empty" style="color:var(--red);">Ошибка поиска</div>';
             }
         }
 
@@ -923,18 +1000,13 @@
             try {
                 const { error } = await sb.from('friendships').insert({
                     requester_id: currentUser.telegram_id,
-                    addressee_id: addresseeId,
-                    status: 'pending'
+                    addressee_id: addresseeId, status: 'pending'
                 });
                 if (error) throw error;
                 showToast('✅ Запрос отправлен');
-                if (btnEl) {
-                    btnEl.className = 'friend-action pending';
-                    btnEl.textContent = '⏳ Запрос';
-                }
+                if (btnEl) { btnEl.className = 'friend-action pending'; btnEl.textContent = '⏳ Запрос'; }
             } catch (e) {
-                console.error('Friend request error:', e);
-                showToast(e.message || 'Ошибка отправки');
+                showToast(e.message || 'Ошибка');
                 if (btnEl) { btnEl.disabled = false; btnEl.textContent = '+ Добавить'; }
             }
         }
@@ -942,134 +1014,654 @@
         async function loadFriends() {
             if (!currentUser) return;
             const container = document.getElementById('friendsList');
-            if (!container) return;
-
             container.innerHTML = '<div class="empty">Загрузка...</div>';
-
             try {
                 const me = currentUser.telegram_id;
-
-                const { data: rels, error } = await sb
-                    .from('friendships')
+                const { data: rels, error } = await sb.from('friendships')
                     .select('id, requester_id, addressee_id, status, created_at')
                     .or(`requester_id.eq.${me},addressee_id.eq.${me}`);
                 if (error) throw error;
-
-                if (!rels || rels.length === 0) {
-                    container.innerHTML = '<div class="empty">Пока нет друзей и запросов</div>';
-                    return;
-                }
+                if (!rels?.length) { container.innerHTML = '<div class="empty">Пока нет друзей</div>'; return; }
 
                 const otherIds = rels.map(r => r.requester_id === me ? r.addressee_id : r.requester_id);
-
-                const { data: users, error: uErr } = await sb
-                    .from('users')
+                const { data: users } = await sb.from('users')
                     .select('telegram_id, display_name, username, custom_avatar, photo_url, elo')
                     .in('telegram_id', otherIds);
-                if (uErr) throw uErr;
+                const userMap = {}; (users || []).forEach(u => userMap[u.telegram_id] = u);
 
-                const userMap = {};
-                users.forEach(u => { userMap[u.telegram_id] = u; });
-
-                const accepted = [];
-                const incoming = [];
-                const outgoing = [];
-
+                const accepted = [], incoming = [], outgoing = [];
                 rels.forEach(r => {
                     const otherId = r.requester_id === me ? r.addressee_id : r.requester_id;
                     const u = userMap[otherId] || { telegram_id: otherId, display_name: 'Игрок', elo: 1000 };
                     const item = { ...r, other: u };
-
                     if (r.status === 'accepted') accepted.push(item);
                     else if (r.status === 'pending' && r.requester_id !== me) incoming.push(item);
                     else if (r.status === 'pending' && r.requester_id === me) outgoing.push(item);
                 });
 
                 let html = '';
-
-                if (incoming.length > 0) {
-                    html += '<div class="section-title" style="margin-top: 0;">Входящие запросы</div>';
-                    html += incoming.map(renderFriendItem).join('');
+                if (incoming.length) {
+                    html += '<div class="section-title" style="margin-top:0;">Входящие</div>';
+                    html += incoming.map(r => renderFriendItem(r, 'incoming')).join('');
                 }
-
-                if (accepted.length > 0) {
+                if (accepted.length) {
                     html += '<div class="section-title">Друзья (' + accepted.length + ')</div>';
                     html += accepted.map(r => renderFriendItem(r, 'friend')).join('');
                 }
-
-                if (outgoing.length > 0) {
+                if (outgoing.length) {
                     html += '<div class="section-title">Исходящие</div>';
                     html += outgoing.map(r => renderFriendItem(r, 'outgoing')).join('');
                 }
-
-                if (!html) html = '<div class="empty">Пока нет друзей и запросов</div>';
-                container.innerHTML = html;
+                container.innerHTML = html || '<div class="empty">Пока нет друзей</div>';
             } catch (e) {
-                console.error('Load friends error:', e);
-                container.innerHTML = '<div class="empty" style="color: var(--red);">Ошибка загрузки</div>';
+                container.innerHTML = '<div class="empty" style="color:var(--red);">Ошибка</div>';
             }
         }
 
         function renderFriendItem(item, mode) {
             const u = item.other;
-            const avatarSrc = u.custom_avatar || u.photo_url;
+            const src = u.custom_avatar || u.photo_url;
             const initial = (u.display_name || 'U')[0].toUpperCase();
-            const avatarHTML = avatarSrc ? `<img src="${avatarSrc}" alt="">` : initial;
-
+            const av = src ? `<img src="${src}" alt="">` : initial;
             let actions = '';
             if (mode === 'friend') {
                 actions = `<button class="friend-action decline" onclick="removeFriend(${item.id}, this)">✕</button>`;
             } else if (mode === 'outgoing') {
-                actions = `<button class="friend-action decline" onclick="removeFriend(${item.id}, this)">Отменить</button>`;
+                actions = `<button class="friend-action decline" onclick="removeFriend(${item.id}, this)">Отмена</button>`;
             } else {
                 actions = `
                     <button class="friend-action accept" onclick="acceptFriend(${item.id}, this)">✓</button>
-                    <button class="friend-action decline" onclick="removeFriend(${item.id}, this)">✕</button>
-                `;
+                    <button class="friend-action decline" onclick="removeFriend(${item.id}, this)">✕</button>`;
             }
-
             return `
                 <div class="leaderboard-item">
-                    <div class="lb-avatar">${avatarHTML}</div>
-                    <div style="flex: 1; min-width: 0;">
+                    <div class="lb-avatar">${av}</div>
+                    <div style="flex:1;min-width:0;">
                         <div class="leaderboard-name">${escapeHtml(u.display_name || 'Игрок')}</div>
-                        <div style="font-size: 11px; color: var(--hint);">
-                            ${u.username ? '@' + u.username + ' · ' : ''}ELO ${u.elo}
-                        </div>
+                        <div style="font-size:11px;color:var(--hint);">${u.username ? '@' + u.username + ' · ' : ''}ELO ${u.elo}</div>
                     </div>
-                    <div style="display: flex; gap: 6px;">${actions}</div>
+                    <div style="display:flex;gap:6px;">${actions}</div>
+                </div>`;
+        }
+
+        async function acceptFriend(id) {
+            try { await sb.from('friendships').update({ status: 'accepted' }).eq('id', id); showToast('✅'); loadFriends(); }
+            catch (e) { showToast('Ошибка'); }
+        }
+        async function removeFriend(id) {
+            try { await sb.from('friendships').delete().eq('id', id); showToast('Удалено'); loadFriends(); }
+            catch (e) { showToast('Ошибка'); }
+        }
+
+        // ============================================================
+        // CLUB
+        // ============================================================
+        async function openClubPage() {
+            switchPage('club');
+            await loadClub();
+            subscribeClubRealtime();
+        }
+
+        async function loadClub() {
+            const container = document.getElementById('clubContent');
+            container.innerHTML = '<div class="empty">Загрузка...</div>';
+            try {
+                const me = currentUser.telegram_id;
+
+                // Ищем моё членство
+                const { data: membership } = await sb.from('club_members')
+                    .select('club_id, role').eq('telegram_id', me).maybeSingle();
+
+                if (!membership) {
+                    myClub = null;
+                    renderNoClub(container);
+                    return;
+                }
+
+                // Загружаем клуб + участников
+                const { data: club, error: cErr } = await sb.from('clubs')
+                    .select('*').eq('id', membership.club_id).single();
+                if (cErr) throw cErr;
+
+                const { data: members } = await sb.from('club_members')
+                    .select('*').eq('club_id', club.id);
+
+                const memberIds = (members || []).map(m => m.telegram_id);
+                const { data: users } = await sb.from('users')
+                    .select('telegram_id, display_name, username, custom_avatar, photo_url, elo')
+                    .in('telegram_id', memberIds);
+                const userMap = {}; (users || []).forEach(u => userMap[u.telegram_id] = u);
+
+                myClub = { club, members: (members || []).map(m => ({ ...m, user: userMap[m.telegram_id] })) };
+                myClub.club.role = membership.role;
+
+                renderMyClub(container);
+            } catch (e) {
+                console.error(e);
+                container.innerHTML = '<div class="empty" style="color:var(--red);">Ошибка загрузки</div>';
+            }
+        }
+
+        function renderNoClub(container) {
+            container.innerHTML = `
+                <div class="profile-header">
+                    <div style="font-size:64px;margin-bottom:14px;">🛡️</div>
+                    <h3 style="margin-bottom:10px;">Вы не в клубе</h3>
+                    <p style="color:var(--hint);font-size:13px;margin-bottom:20px;">
+                        Создайте свой клуб или подайте заявку в существующий
+                    </p>
+                    <button class="save-btn" onclick="openCreateClubSheet()">➕ Создать клуб</button>
+                    <button class="save-btn secondary" onclick="openClubSearch()">🔍 Найти клуб</button>
                 </div>
+                <div id="clubSearchResults"></div>
             `;
         }
 
-        async function acceptFriend(friendshipId, btnEl) {
+        function renderMyClub(container) {
+            const { club, members } = myClub;
+            const isOwner = club.role === 'owner' || club.owner_id === currentUser.telegram_id;
+            const logoSrc = club.logo_url;
+            const logoHTML = logoSrc ? `<img src="${logoSrc}" alt="">` : club.tag.slice(0, 2).toUpperCase();
+
+            let membersHTML = members.map(m => {
+                const u = m.user || {};
+                const src = u.custom_avatar || u.photo_url;
+                const initial = (u.display_name || 'U')[0].toUpperCase();
+                const av = src ? `<img src="${src}" alt="">` : initial;
+                const roleTag = m.role === 'owner' ? ' <span style="color:var(--gold);font-size:10px;">OWNER</span>' : '';
+                const kickBtn = (isOwner && m.role !== 'owner')
+                    ? `<button class="friend-action decline" onclick="kickMember(${m.telegram_id})">Кик</button>`
+                    : '';
+                return `
+                    <div class="leaderboard-item">
+                        <div class="lb-avatar">${av}</div>
+                        <div style="flex:1;min-width:0;">
+                            <div class="leaderboard-name">${escapeHtml(u.display_name || 'Игрок')}${roleTag}</div>
+                            <div style="font-size:11px;color:var(--hint);">ELO ${u.elo || 1000}</div>
+                        </div>
+                        ${kickBtn}
+                    </div>
+                `;
+            }).join('');
+
+            // Заявки — только для owner
+            const requestsHTML = isOwner ? '<div id="clubRequestsBlock"></div>' : '';
+
+            container.innerHTML = `
+                <div class="club-card">
+                    <div class="club-header">
+                        <div class="club-logo" onclick="${isOwner ? 'openClubLogoSheet()' : ''}">${logoHTML}</div>
+                        <div style="flex:1;min-width:0;">
+                            <div class="club-name">${escapeHtml(club.name)}</div>
+                            <div class="club-tag">[${escapeHtml(club.tag)}] · ${members.length}/${club.max_members}</div>
+                        </div>
+                    </div>
+                    ${club.description ? `<div class="club-desc">${escapeHtml(club.description)}</div>` : ''}
+                    ${isOwner ? `
+                        <button class="save-btn secondary" onclick="openEditClubSheet()">✏️ Редактировать</button>
+                    ` : ''}
+                    <button class="save-btn danger" onclick="leaveClub()">🚪 Покинуть клуб</button>
+                </div>
+
+                ${requestsHTML}
+
+                <div class="section-title">Состав (${members.length}/${club.max_members})</div>
+                ${membersHTML}
+            `;
+
+            if (isOwner) loadClubRequests();
+        }
+
+        async function loadClubRequests() {
+            const el = document.getElementById('clubRequestsBlock');
+            if (!el) return;
             try {
-                const { error } = await sb
-                    .from('friendships')
-                    .update({ status: 'accepted' })
-                    .eq('id', friendshipId);
+                const { data: reqs } = await sb.from('club_requests')
+                    .select('id, telegram_id, created_at')
+                    .eq('club_id', myClub.club.id).eq('status', 'pending');
+                if (!reqs?.length) { el.innerHTML = ''; return; }
+
+                const ids = reqs.map(r => r.telegram_id);
+                const { data: users } = await sb.from('users')
+                    .select('telegram_id, display_name, username, custom_avatar, photo_url, elo')
+                    .in('telegram_id', ids);
+                const userMap = {}; (users || []).forEach(u => userMap[u.telegram_id] = u);
+
+                el.innerHTML = `
+                    <div class="section-title">Заявки (${reqs.length})</div>
+                    ${reqs.map(r => {
+                        const u = userMap[r.telegram_id] || {};
+                        const src = u.custom_avatar || u.photo_url;
+                        const initial = (u.display_name || 'U')[0].toUpperCase();
+                        const av = src ? `<img src="${src}" alt="">` : initial;
+                        return `
+                            <div class="leaderboard-item">
+                                <div class="lb-avatar">${av}</div>
+                                <div style="flex:1;min-width:0;">
+                                    <div class="leaderboard-name">${escapeHtml(u.display_name || 'Игрок')}</div>
+                                    <div style="font-size:11px;color:var(--hint);">ELO ${u.elo || 1000}</div>
+                                </div>
+                                <button class="friend-action accept" onclick="acceptClubRequest(${r.id}, ${r.telegram_id})">✓</button>
+                                <button class="friend-action decline" onclick="declineClubRequest(${r.id})">✕</button>
+                            </div>`;
+                    }).join('')}
+                `;
+            } catch (e) { console.error(e); }
+        }
+
+        async function acceptClubRequest(requestId, userId) {
+            try {
+                // Проверка лимита
+                if (myClub.members.length >= myClub.club.max_members) {
+                    showToast('Клуб заполнен (макс ' + myClub.club.max_members + ')');
+                    return;
+                }
+                // Добавляем в участники
+                await sb.from('club_members').insert({
+                    club_id: myClub.club.id, telegram_id: userId, role: 'member'
+                });
+                // Обновляем статус заявки
+                await sb.from('club_requests').update({ status: 'accepted' }).eq('id', requestId);
+                showToast('✅ Принят');
+                openClubPage();
+            } catch (e) { showToast('Ошибка: ' + e.message); }
+        }
+
+        async function declineClubRequest(requestId) {
+            try {
+                await sb.from('club_requests').update({ status: 'declined' }).eq('id', requestId);
+                showToast('Отклонено');
+                loadClubRequests();
+            } catch (e) { showToast('Ошибка'); }
+        }
+
+        async function kickMember(userId) {
+            if (!confirm('Кикнуть этого игрока?')) return;
+            try {
+                await sb.from('club_members').delete()
+                    .eq('club_id', myClub.club.id).eq('telegram_id', userId);
+                showToast('Кикнут');
+                openClubPage();
+            } catch (e) { showToast('Ошибка'); }
+        }
+
+        async function leaveClub() {
+            if (!confirm('Покинуть клуб?')) return;
+            try {
+                await sb.from('club_members').delete()
+                    .eq('club_id', myClub.club.id).eq('telegram_id', currentUser.telegram_id);
+
+                // Если владелец — удаляем клуб
+                if (myClub.club.owner_id === currentUser.telegram_id) {
+                    await sb.from('clubs').delete().eq('id', myClub.club.id);
+                }
+                showToast('Вы покинули клуб');
+                myClub = null;
+                openClubPage();
+            } catch (e) { showToast('Ошибка'); }
+        }
+
+        // ==== Создание клуба ====
+        function openCreateClubSheet() {
+            const name = prompt('Название клуба (2-30 символов):');
+            if (!name || name.length < 2 || name.length > 30) { if(name!==null) showToast('Неверная длина'); return; }
+            const tag = prompt('Тег клуба (2-5 букв/цифр):');
+            if (!tag || tag.length < 2 || tag.length > 5) { if(tag!==null) showToast('Неверный тег'); return; }
+            const desc = prompt('Описание (необязательно):') || '';
+
+            createClub(name, tag, desc);
+        }
+
+        async function createClub(name, tag, description) {
+            try {
+                showToast('Создание клуба...');
+                const { data: club, error } = await sb.from('clubs').insert({
+                    name, tag, description, owner_id: currentUser.telegram_id, max_members: 10
+                }).select().single();
                 if (error) throw error;
-                showToast('✅ Теперь вы друзья');
-                loadFriends();
+
+                await sb.from('club_members').insert({
+                    club_id: club.id, telegram_id: currentUser.telegram_id, role: 'owner'
+                });
+
+                showToast('✅ Клуб создан!');
+                openClubPage();
             } catch (e) {
                 console.error(e);
-                showToast('Ошибка');
+                showToast('Ошибка: ' + e.message);
             }
         }
 
-        async function removeFriend(friendshipId, btnEl) {
+        // ==== Редактирование клуба ====
+        function openEditClubSheet() {
+            const name = prompt('Название:', myClub.club.name);
+            if (name === null) return;
+            const tag = prompt('Тег:', myClub.club.tag);
+            if (tag === null) return;
+            const desc = prompt('Описание:', myClub.club.description || '');
+            if (desc === null) return;
+
+            sb.from('clubs').update({ name, tag, description: desc }).eq('id', myClub.club.id)
+                .then(() => { showToast('✅ Обновлено'); openClubPage(); });
+        }
+
+        // ==== Поиск клуба ====
+        async function openClubSearch() {
+            const query = prompt('Поиск клуба (название или тег):');
+            if (!query || query.length < 2) return;
             try {
-                const { error } = await sb
-                    .from('friendships')
-                    .delete()
-                    .eq('id', friendshipId);
+                const safe = query.replace(/[%_]/g, '');
+                const { data, error } = await sb.from('clubs')
+                    .select('id, name, tag, description, logo_url, max_members')
+                    .or(`name.ilike.%${safe}%,tag.ilike.%${safe}%`)
+                    .limit(20);
                 if (error) throw error;
-                showToast('Удалено');
-                loadFriends();
+
+                const container = document.getElementById('clubSearchResults');
+                if (!data?.length) {
+                    container.innerHTML = '<div class="empty">Ничего не найдено</div>';
+                    return;
+                }
+
+                // Узнаем, куда уже отправлены заявки
+                const clubIds = data.map(c => c.id);
+                const { data: myReqs } = await sb.from('club_requests')
+                    .select('club_id, status').eq('telegram_id', currentUser.telegram_id)
+                    .in('club_id', clubIds);
+                const reqMap = {}; (myReqs || []).forEach(r => reqMap[r.club_id] = r.status);
+
+                container.innerHTML = '<div class="section-title">Найденные клубы</div>' + data.map(c => {
+                    const logoSrc = c.logo_url;
+                    const logoHTML = logoSrc ? `<img src="${logoSrc}" alt="">` : c.tag.slice(0, 2).toUpperCase();
+                    const status = reqMap[c.id];
+                    let btn;
+                    if (status === 'pending') btn = `<button class="friend-action pending" disabled>⏳ Заявка</button>`;
+                    else if (status === 'accepted') btn = `<button class="friend-action pending" disabled>✓ Принят</button>`;
+                    else btn = `<button class="friend-action add" onclick="sendClubRequest(${c.id}, this)">+ Заявка</button>`;
+                    return `
+                        <div class="leaderboard-item">
+                            <div class="lb-avatar" style="border-radius:14px;">${logoHTML}</div>
+                            <div style="flex:1;min-width:0;">
+                                <div class="leaderboard-name">${escapeHtml(c.name)}</div>
+                                <div style="font-size:11px;color:var(--hint);">[${escapeHtml(c.tag)}] · до ${c.max_members}</div>
+                            </div>
+                            ${btn}
+                        </div>`;
+                }).join('');
+            } catch (e) {
+                showToast('Ошибка поиска');
+            }
+        }
+
+        async function sendClubRequest(clubId, btnEl) {
+            if (btnEl) { btnEl.disabled = true; btnEl.textContent = '...'; }
+            try {
+                await sb.from('club_requests').upsert({
+                    club_id: clubId, telegram_id: currentUser.telegram_id, status: 'pending'
+                }, { onConflict: 'club_id,telegram_id' });
+                showToast('✅ Заявка отправлена');
+                if (btnEl) { btnEl.className = 'friend-action pending'; btnEl.textContent = '⏳ Заявка'; }
+            } catch (e) {
+                showToast('Ошибка: ' + e.message);
+                if (btnEl) { btnEl.disabled = false; btnEl.textContent = '+ Заявка'; }
+            }
+        }
+
+        // ==== Realtime для клуба ====
+        function subscribeClubRealtime() {
+            if (!currentUser) return;
+            if (clubChannel) sb.removeChannel(clubChannel);
+
+            clubChannel = sb.channel('club_rt_' + currentUser.telegram_id)
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'club_members' }, () => {
+                    if (document.getElementById('page-club').classList.contains('active')) loadClub();
+                })
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'club_requests' }, () => {
+                    if (document.getElementById('page-club').classList.contains('active')) loadClub();
+                })
+                .subscribe();
+        }
+
+        // ============================================================
+        // CHAT
+        // ============================================================
+        function openChatPage() {
+            switchPage('chat');
+            loadChatList();
+        }
+
+        async function loadChatList() {
+            if (!currentUser) return;
+            const container = document.getElementById('chatList');
+            container.innerHTML = '<div class="empty">Загрузка...</div>';
+            try {
+                const me = currentUser.telegram_id;
+                const items = [];
+
+                // Клубный чат (если в клубе)
+                const { data: membership } = await sb.from('club_members')
+                    .select('club_id').eq('telegram_id', me).maybeSingle();
+                if (membership) {
+                    const { data: club } = await sb.from('clubs')
+                        .select('id, name, tag, logo_url').eq('id', membership.club_id).single();
+                    if (club) {
+                        const { data: lastMsg } = await sb.from('messages')
+                            .select('text, created_at, sender_id')
+                            .eq('club_id', club.id)
+                            .order('created_at', { ascending: false }).limit(1).maybeSingle();
+
+                        items.push({
+                            type: 'club', id: club.id, name: club.name + ' [' + club.tag + ']',
+                            avatar: club.logo_url, square: true,
+                            preview: lastMsg?.text || 'Чат клуба'
+                        });
+                    }
+                }
+
+                // Личные чаты (по друзьям)
+                const { data: friends } = await sb.from('friendships')
+                    .select('requester_id, addressee_id, status')
+                    .or(`requester_id.eq.${me},addressee_id.eq.${me}`)
+                    .eq('status', 'accepted');
+
+                const friendIds = (friends || []).map(f => f.requester_id === me ? f.addressee_id : f.requester_id);
+
+                if (friendIds.length) {
+                    const { data: users } = await sb.from('users')
+                        .select('telegram_id, display_name, username, custom_avatar, photo_url')
+                        .in('telegram_id', friendIds);
+                    const userMap = {}; (users || []).forEach(u => userMap[u.telegram_id] = u);
+
+                    for (const fid of friendIds) {
+                        const u = userMap[fid] || { telegram_id: fid, display_name: 'Игрок' };
+                        // последнее сообщение в диалоге
+                        const { data: msgs } = await sb.from('messages')
+                            .select('text, created_at, sender_id')
+                            .or(`and(sender_id.eq.${me},recipient_id.eq.${fid}),and(sender_id.eq.${fid},recipient_id.eq.${me})`)
+                            .order('created_at', { ascending: false }).limit(1);
+                        const last = msgs?.[0];
+                        items.push({
+                            type: 'dm', id: fid,
+                            name: u.display_name || 'Игрок',
+                            avatar: u.custom_avatar || u.photo_url,
+                            square: false,
+                            preview: last?.text || 'Начать чат'
+                        });
+                    }
+                }
+
+                if (!items.length) {
+                    container.innerHTML = '<div class="empty">Нет чатов. Добавьте друзей или вступите в клуб.</div>';
+                    return;
+                }
+
+                container.innerHTML = items.map(it => {
+                    const av = it.avatar ? `<img src="${it.avatar}" alt="">` : (it.name[0] || '?').toUpperCase();
+                    const square = it.square ? ' square' : '';
+                    return `
+                        <div class="chat-list-item" onclick="openChat('${it.type}', ${it.id})">
+                            <div class="chat-list-avatar${square}">${av}</div>
+                            <div class="chat-list-info">
+                                <div class="chat-list-name">${escapeHtml(it.name)}</div>
+                                <div class="chat-list-preview">${escapeHtml(it.preview)}</div>
+                            </div>
+                        </div>`;
+                }).join('');
             } catch (e) {
                 console.error(e);
-                showToast('Ошибка');
+                container.innerHTML = '<div class="empty" style="color:var(--red);">Ошибка</div>';
             }
+        }
+
+        async function openChat(type, id) {
+            try {
+                if (type === 'club') {
+                    const { data: club } = await sb.from('clubs')
+                        .select('id, name, tag, logo_url').eq('id', id).single();
+                    currentChat = { type: 'club', id: club.id, name: club.name + ' [' + club.tag + ']', avatar: club.logo_url };
+                } else {
+                    const { data: u } = await sb.from('users')
+                        .select('telegram_id, display_name, custom_avatar, photo_url').eq('telegram_id', id).single();
+                    currentChat = { type: 'dm', id: u.telegram_id, name: u.display_name || 'Игрок', avatar: u.custom_avatar || u.photo_url };
+                }
+
+                document.getElementById('chatViewTitle').textContent = currentChat.name;
+                const avEl = document.getElementById('chatViewAvatar');
+                avEl.className = 'chat-list-avatar' + (currentChat.type === 'club' ? ' square' : '');
+                avEl.innerHTML = currentChat.avatar ? `<img src="${currentChat.avatar}" alt="">` : (currentChat.name[0] || '?').toUpperCase();
+
+                document.getElementById('chatView').classList.add('active');
+                document.getElementById('chatMessages').innerHTML = '';
+
+                await loadMessages();
+                subscribeChatRealtime();
+            } catch (e) {
+                console.error(e);
+                showToast('Ошибка чата');
+            }
+        }
+
+        function closeChatView() {
+            document.getElementById('chatView').classList.remove('active');
+            if (chatChannel) { sb.removeChannel(chatChannel); chatChannel = null; }
+            currentChat = null;
+            openChatPage();
+        }
+
+        async function loadMessages() {
+            if (!currentChat || !currentUser) return;
+            const me = currentUser.telegram_id;
+            const container = document.getElementById('chatMessages');
+
+            let query;
+            if (currentChat.type === 'club') {
+                query = sb.from('messages')
+                    .select('id, sender_id, text, image_url, created_at')
+                    .eq('club_id', currentChat.id)
+                    .order('created_at', { ascending: true }).limit(200);
+            } else {
+                query = sb.from('messages')
+                    .select('id, sender_id, text, image_url, created_at')
+                    .or(`and(sender_id.eq.${me},recipient_id.eq.${currentChat.id}),and(sender_id.eq.${currentChat.id},recipient_id.eq.${me})`)
+                    .order('created_at', { ascending: true }).limit(200);
+            }
+
+            const { data, error } = await query;
+            if (error) { console.error(error); return; }
+
+            // Подтягиваем профили отправителей
+            const senderIds = [...new Set((data || []).map(m => m.sender_id))];
+            const { data: users } = await sb.from('users')
+                .select('telegram_id, display_name, custom_avatar, photo_url')
+                .in('telegram_id', senderIds.length ? senderIds : [0]);
+            const userMap = {}; (users || []).forEach(u => userMap[u.telegram_id] = u);
+
+            container.innerHTML = (data || []).map(m => renderBubble(m, userMap[m.sender_id], me)).join('');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function renderBubble(msg, user, me) {
+            const isMe = msg.sender_id === me;
+            const cls = isMe ? 'me' : 'them';
+            const time = new Date(msg.created_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+            const author = (!isMe && currentChat.type === 'club')
+                ? `<div class="chat-bubble-author">${escapeHtml(user?.display_name || 'Игрок')}</div>`
+                : '';
+            return `
+                <div class="chat-bubble ${cls}">
+                    ${author}
+                    <div>${escapeHtml(msg.text || '')}</div>
+                    <div class="chat-bubble-time">${time}</div>
+                </div>`;
+        }
+
+        async function sendMessage() {
+            if (!currentChat || !currentUser) return;
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            input.value = '';
+            try {
+                const payload = {
+                    sender_id: currentUser.telegram_id,
+                    text,
+                    club_id: currentChat.type === 'club' ? currentChat.id : null,
+                    recipient_id: currentChat.type === 'dm' ? currentChat.id : null
+                };
+                const { error } = await sb.from('messages').insert(payload);
+                if (error) throw error;
+                // Realtime должен подхватить и отобразить
+            } catch (e) {
+                console.error(e);
+                showToast('Ошибка отправки');
+            }
+        }
+
+        document.getElementById('chatInput')?.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); sendMessage(); }
+        });
+
+        function subscribeChatRealtime() {
+            if (!currentChat) return;
+            if (chatChannel) sb.removeChannel(chatChannel);
+
+            const me = currentUser.telegram_id;
+            const filter = currentChat.type === 'club'
+                ? `club_id=eq.${currentChat.id}`
+                : `recipient_id=eq.${me}`; // грубо, но работает: фильтр по recipient
+
+            chatChannel = sb.channel('chat_' + currentChat.type + '_' + currentChat.id)
+                .on('postgres_changes', {
+                    event: 'INSERT', schema: 'public', table: 'messages'
+                }, (payload) => {
+                    const m = payload.new;
+                    // Фильтрация на клиенте
+                    if (currentChat.type === 'club') {
+                        if (m.club_id !== currentChat.id) return;
+                    } else {
+                        const isForMe = m.recipient_id === me && m.sender_id === currentChat.id;
+                        const isFromMe = m.sender_id === me && m.recipient_id === currentChat.id;
+                        if (!isForMe && !isFromMe) return;
+                    }
+                    appendMessage(m);
+                })
+                .subscribe();
+        }
+
+        async function appendMessage(m) {
+            const container = document.getElementById('chatMessages');
+            if (!container) return;
+            // Подтянем автора
+            let user = null;
+            if (m.sender_id !== currentUser.telegram_id) {
+                const { data } = await sb.from('users')
+                    .select('telegram_id, display_name, custom_avatar, photo_url')
+                    .eq('telegram_id', m.sender_id).single();
+                user = data;
+            }
+            container.insertAdjacentHTML('beforeend', renderBubble(m, user, currentUser.telegram_id));
+            container.scrollTop = container.scrollHeight;
         }
 
         // ============================================================
@@ -1080,10 +1672,8 @@
         }
 
         function escapeHtml(str) {
-            return String(str)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
+            return String(str ?? '')
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;');
         }
 
